@@ -364,22 +364,29 @@ open class Dialog : LinearLayout {
             dialog?.window?.setDimAmount(0.8f)
 
             Handler(Looper.getMainLooper()).post {
-                val hasWindowFocus = (context as? Activity)?.hasWindowFocus()
-                if (hasWindowFocus == true) {
-                    dialog?.show()
-                }
+                dialog?.show()
             }
 
             return dialog
         }
 
         // Shared methods
-        fun showSimpleDialog(context: Context?, title: String, content: String?, buttonTxt: String) {
-            show(context, null,
+        fun showSimpleDialog(context: Context?, title: String, content: String?, buttonTxt: String, illustrationResId: Int? = null) {
+            show(context, illustrationResId,
                     title,
                     content,
                     DialogActionItemModel(buttonTxt, null)
             )
+        }
+
+        fun showSimpleDialog(context: Context?, title: Int, content: Int?, buttonTxt: Int, illustrationResId: Int? = null) {
+            context?.let { contextInner ->
+                show(context, illustrationResId,
+                        contextInner.resources?.getString(title),
+                        content?.let { contextInner.resources?.getString(it) },
+                        DialogActionItemModel(contextInner.resources?.getString(buttonTxt), null)
+                )
+            }
         }
 
         fun showFinishingAppDialog(context: Context?) {

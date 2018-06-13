@@ -2,4 +2,5 @@
     <string name="app_name">Location Map Service</string>
 
     <string name="main_title">Location Map Service</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

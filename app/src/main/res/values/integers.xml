@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Alignment constants -->
+    <integer name="alignment_text_start">2</integer>
+    <integer name="alignment_view_start">5</integer>
+
+    <!-- Layout size constants -->
+    <integer name="match_parent">-1</integer>
+    <integer name="wrap_content">-2</integer>
+
+    <!-- Visibility constants -->
+    <integer name="visibility_visible">0</integer>
+    <integer name="visibility_invisible">1</integer>
+    <integer name="visibility_gone">2</integer>
+
+    <!-- Shared values -->
+    <integer name="general_text_alignment">@integer/alignment_text_start</integer>
+    <integer name="general_navigation_fade_in_duration">300</integer>
+    <integer name="general_navigation_fade_out_duration">300</integer>
+</resources>

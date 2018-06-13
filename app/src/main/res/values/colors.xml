@@ -3,4 +3,36 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    // Primary colors
+    <color name="rose_main">#a9193f</color>
+    <color name="rose_bright">#e52457</color>
+    <color name="rose_dark">#811330</color>
+    <color name="rose_light">#b95570</color>
+    <color name="rose_ultra_light">#f4f1f2</color>
+
+    <color name="rose_gradient_start">@color/rose_main</color>
+    <color name="rose_gradient_end">@color/rose_bright</color>
+
+    // Neutrals
+    <color name="brightest">#ffffff</color>
+    <color name="ultra_bright">#f9f6f7</color>
+    <color name="brighter">#f1eeef</color>
+    <color name="brightbrighter">#dfdddd</color>
+    <color name="bright">#cdcbcc</color>
+    <color name="dark">#b8b7b8</color>
+    <color name="darker">#9a9899</color>
+    <color name="ultra_dark">#7a7a7a</color>
+    <color name="darkest">#393738</color>
+
+    // Secondary colors
+    <color name="warning">#ee2b45</color>
+    <color name="success">#5db649</color>
+    <color name="favorite">#ffa305</color>
+    <color name="message">#0a88b2</color>
+
+    // Function Colors - Common
+    <color name="text_light">@color/ultra_dark</color>
+    <color name="text_normal">@color/darkest</color>
+    <color name="page_background">@color/rose_ultra_light</color>
 </resources>

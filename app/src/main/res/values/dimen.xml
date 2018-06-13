@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Text sizes -->
+    <dimen name="default_displayXL2_text_size">56sp</dimen>
+    <dimen name="default_displayXL1_text_size">44sp</dimen>
+    <dimen name="default_display2_text_size">36sp</dimen>
+    <dimen name="default_display1_text_size">32sp</dimen>
+    <dimen name="default_headline2_text_size">28sp</dimen>
+    <dimen name="default_headline1_text_size">24sp</dimen>
+    <dimen name="default_title1_text_size">20sp</dimen>
+    <dimen name="default_title2_text_size">22sp</dimen>
+    <dimen name="default_body2_text_size">18sp</dimen>
+    <dimen name="default_body1_text_size">16sp</dimen>
+    <dimen name="default_small2_text_size">14sp</dimen>
+    <dimen name="default_small1_text_size">12sp</dimen>
+    <dimen name="default_micro2_text_size">10sp</dimen>
+    <dimen name="default_micro1_text_size">8sp</dimen>
+</resources>

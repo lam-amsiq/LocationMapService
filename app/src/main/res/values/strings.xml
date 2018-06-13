@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">LocationMapService</string>
+    <string name="app_name">Location Map Service</string>
+
+    <string name="main_title">Location Map Service</string>
 </resources>

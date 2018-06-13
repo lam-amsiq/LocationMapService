@@ -1,11 +1,12 @@
-package lam.com.locationmapservice
+package lam.com.locationmapservice.demo.activities
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
-import lam.com.locationmapservice.demo.fragments.LMSFragment
-import lam.com.locationmapservice.demo.interfaces.IFragment
+import lam.com.locationmapservice.R
+import lam.com.locationmapservice.lib.fragments.LMSFragment
+import lam.com.locationmapservice.lib.interfaces.IFragment
 import org.androidannotations.annotations.EActivity
 
 @EActivity(R.layout.activity_start_up)
@@ -18,7 +19,7 @@ open class StartUpActivity : AppCompatActivity(), IFragment {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val mainFragment = SomeFragment_.builder().build()
+//        val mainFragment = MapFragment_.builder().build()
 //        clearStack()
 //        this.beginTransactionTo(mainFragment)
     }

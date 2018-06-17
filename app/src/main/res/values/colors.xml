@@ -35,4 +35,33 @@
     <color name="text_light">@color/ultra_dark</color>
     <color name="text_normal">@color/darkest</color>
     <color name="page_background">@color/rose_ultra_light</color>
+
+    // Buttons
+    <color name="button_rose">@color/rose_bright</color>
+    <color name="button_rose_active">#A01336</color>
+    <color name="button_rose_not_selected">@color/ultra_bright</color>
+
+    // Dialog
+    <color name="custom_dialog_background">@color/brightest</color>
+
+    <color name="custom_dialog_multiple_single_choice_pressed">@color/button_rose</color>
+    <color name="custom_dialog_multiple_single_choice_unpressed">@color/brightest</color>
+    <color name="custom_dialog_multiple_single_choice_pressed_text">@color/brightest</color>
+    <color name="custom_dialog_multiple_single_choice_unpressed_text">@color/ultra_dark</color>
+    <color name="custom_dialog_multiple_single_choice_unpressed_border">@color/ultra_dark</color>
+
+    <color name="custom_dialog_multiple_choice_pressed">@color/button_rose</color>
+    <color name="custom_dialog_multiple_choice_disabled">@color/brightbrighter</color>
+    <color name="custom_dialog_multiple_choice_unpressed">@color/button_rose_not_selected</color>
+    <color name="custom_dialog_multiple_choice_pressed_text">@color/brightest</color>
+    <color name="custom_dialog_multiple_choice_unpressed_text">@color/darker</color>
+    <color name="custom_dialog_multiple_choice_divider">@color/brightbrighter</color>
+
+    // Map
+    <color name="custom_map_heat_marker_center">#a14</color>
+    <color name="custom_map_heat_marker_middle">#fb0</color>
+    <color name="custom_map_heat_marker_end">#9f0</color>
+
+    <color name="custom_map_user_marker_fill">#ccb95570</color>
+    <color name="custom_map_user_marker_stroke">@color/rose_main</color>
 </resources>

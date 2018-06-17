@@ -1,6 +1,25 @@
 <resources>
     <string name="app_name">Location Map Service</string>
-
     <string name="main_title">Location Map Service</string>
-    <string name="title_activity_maps">Map</string>
+
+    <!-- Shared -->
+    <string name="shared_app_name">Location Map Service</string>
+    <string name="shared_action_ok">OK</string>
+    <string name="shared_action_cancel">Cancel</string>
+    <string name="shared_dialog_close_app_title">You are about to close the app</string>
+    <string name="shared_dialog_close_app_action_accept">Close</string>
+
+    <!-- Location -->
+    <string name="location_dialog_location_is_off_title">Device location disabled</string>
+    <string name="location_dialog_location_is_off_content">To continue, enable location from device’s settings</string>
+    <string name="location_dialog_access_denied_title">Location service needs access to your location</string>
+    <string name="location_dialog_access_denied_content">Enable location in Settings to continue</string>
+    <string name="location_dialog_access_denied_action_negative">Later</string>
+    <string name="location_dialog_access_denied_action_positive">Open Settings</string>
+    <string name="location_dialog_no_internet_title">Internet connection lost</string>
+    <string name="location_dialog_no_internet_content">Location update failed. Please try again later</string>
+    <string name="location_dialog_no_internet_action">@string/shared_action_ok</string>
+    <string name="location_dialog_error_enable_title">Location error</string>
+    <string name="location_dialog_error_enable_content">Enabling location failed. Please try again</string>
+    <string name="location_dialog_error_enable_action">@string/shared_action_ok</string>
 </resources>

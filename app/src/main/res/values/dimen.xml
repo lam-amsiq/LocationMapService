@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Shared -->
+    <dimen name="corner_radius_circular">10000dp</dimen>
+
+    <dimen name="padding_1">1dp</dimen>
+    <dimen name="padding_4">4dp</dimen>
+    <dimen name="padding_6">6dp</dimen>
+    <dimen name="padding_8">8dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+    <dimen name="padding_14">14dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_24">24dp</dimen>
+    <dimen name="padding_36">36dp</dimen>
+    <dimen name="padding_48">48dp</dimen>
+    <dimen name="padding_60">60dp</dimen>
+    <dimen name="padding_64">64dp</dimen>
+    <dimen name="padding_72">72dp</dimen>
+    <dimen name="padding_84">84dp</dimen>
+    <dimen name="padding_96">96dp</dimen>
+
     <!-- Text sizes -->
     <dimen name="default_displayXL2_text_size">56sp</dimen>
     <dimen name="default_displayXL1_text_size">44sp</dimen>
@@ -15,4 +34,14 @@
     <dimen name="default_small1_text_size">12sp</dimen>
     <dimen name="default_micro2_text_size">10sp</dimen>
     <dimen name="default_micro1_text_size">8sp</dimen>
+
+    <!-- Dialog -->
+    <dimen name="dialog_width">296dp</dimen>
+    <dimen name="dialog_multiple_choice_divider">1dp</dimen>
+    <dimen name="dialog_corner_radius">12dp</dimen>
+    <dimen name="dialog_illustration_size">98dp</dimen>
+    <dimen name="dialog_button_size">50dp</dimen>
+
+    <!-- Map -->
+    <dimen name="map_user_marker_size">100dp</dimen>
 </resources>

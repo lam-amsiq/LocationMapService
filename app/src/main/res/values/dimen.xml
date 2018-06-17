@@ -41,4 +41,7 @@
     <dimen name="dialog_corner_radius">12dp</dimen>
     <dimen name="dialog_illustration_size">98dp</dimen>
     <dimen name="dialog_button_size">50dp</dimen>
+
+    <!-- Map -->
+    <dimen name="map_user_marker_size">100dp</dimen>
 </resources>

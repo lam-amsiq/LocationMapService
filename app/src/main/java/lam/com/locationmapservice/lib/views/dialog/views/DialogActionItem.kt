@@ -16,14 +16,11 @@ import org.androidannotations.annotations.EViewGroup
 
 @EViewGroup(R.layout.dialog_action_item)
 open class DialogActionItem : FrameLayout {
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     var action: Runnable? = null
-
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-
-    constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     fun setActionItem(item: DialogActionItemModel) {
         this.action = item.action

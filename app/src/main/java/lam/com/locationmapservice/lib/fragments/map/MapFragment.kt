@@ -51,19 +51,17 @@ open class MapFragment : LMSFragment() {
     private val annotationMap: HashMap<String, Annotation?> = HashMap()
 
     private fun addAnnotation(position: LatLng?, info: Annotation?, icon: Int) {
-        context?.let { contextInner ->
-            position?.let { positionInner ->
-                getBitmapSingle(Picasso.with(contextInner), icon, 100)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ bitmap ->
-                            val marker = MapController.addAnnotation(positionInner, BitmapDescriptorFactory.fromBitmap(bitmap))
-                            marker?.id?.let { markerId ->
-                                info?.annotationId = markerId
-                                annotationMap[markerId] = info
-                            }
-                        }, Throwable::printStackTrace)
-            }
+        position?.let { positionInner ->
+            getBitmapSingle(Picasso.get(), icon, 100)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ bitmap ->
+                        val marker = MapController.addAnnotation(positionInner, BitmapDescriptorFactory.fromBitmap(bitmap))
+                        marker?.id?.let { markerId ->
+                            info?.annotationId = markerId
+                            annotationMap[markerId] = info
+                        }
+                    }, Throwable::printStackTrace)
         }
     }
 

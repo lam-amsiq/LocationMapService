@@ -65,7 +65,7 @@ dependencies {
     // RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     // https://github.com/ReactiveX/RxAndroid/releases
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.14'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.16'
     // https://github.com/ReactiveX/RxJava/releases
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     // https://github.com/ReactiveX/RxKotlin/releases
@@ -81,7 +81,7 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.5'
 
     //Picasso
-    implementation 'com.squareup.picasso:picasso:2.5.3-SNAPSHOT'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'jp.wasabeef:picasso-transformations:2.2.1'
     // Glide
     implementation 'com.github.bumptech.glide:glide:' + Glide

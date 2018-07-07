@@ -53,14 +53,14 @@ object MapController {
     }
 
     fun onRequestPermissionsResult(requestCode: Int) {
-        if (requestCode == LocationController.LOCATION_REQUEST_CODE) {
+        if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE || requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL) {
             enableMyLocation(true)
         }
     }
 
     fun onActivityResult(requestCode: Int) {
-        if (requestCode == LocationController.LOCATION_REQUEST_CODE_RATIONAL) {
-            enableMyLocation()
+        if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL || requestCode == LocationController.LOCATION_ENABLE_REQUEST_CODE) {
+            enableMyLocation(true)
         }
     }
 
@@ -104,7 +104,7 @@ object MapController {
     @SuppressLint("MissingPermission") // Checked in LocationController
     fun enableMyLocation(zoomToMyLocation: Boolean = false): Boolean? {
         mapView?.context?.let { contextInner ->
-            if (LocationController.hasFullLocationPermission(contextInner) && LocationController.isProviderEnabled(contextInner) && googleMap?.isMyLocationEnabled != true) {
+            if (LocationController.hasFullPermissionAndIsProviderEnable(contextInner) && googleMap?.isMyLocationEnabled != true) {
                 googleMap?.isMyLocationEnabled = true
 
                 if (zoomToMyLocation) {
@@ -123,7 +123,7 @@ object MapController {
     fun zoomCameraTo(location: Location?, zoom: Float?) {
         getLatLngFromLocation(location)?.let { latLgn ->
             var cameraBuilder = CameraPosition.Builder().target(latLgn)
-            zoom?.let { cameraBuilder = cameraBuilder.zoom(zoom) }
+            zoom?.let { cameraBuilder = cameraBuilder.zoom(it) }
 
             googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()))
         }

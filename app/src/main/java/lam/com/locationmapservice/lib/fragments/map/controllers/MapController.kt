@@ -4,13 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.heatmaps.Gradient
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import io.reactivex.Observable
+import io.reactivex.Single
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.lib.controllers.location.LocationController
 import lam.com.locationmapservice.lib.models.Location
@@ -64,22 +64,32 @@ object MapController {
         }
     }
 
-    fun setupMaps(context: Context, fragment: Fragment, mapView: MapView, savedInstanceState: Bundle?): Observable<GoogleMap> {
-        return Observable.create { emitter ->
-            this.mapView = mapView
+    fun setupMapView(mapView: MapView, savedInstanceState: Bundle?) {
+        this.mapView = mapView
 
-            this.mapView?.onCreate(savedInstanceState)
-            this.mapView?.onResume() // needed to get the map to display immediately
+        this.mapView?.onCreate(savedInstanceState)
+        this.mapView?.onResume() // needed to get the map to display immediately
+    }
 
+    fun setupMap(context: Context?): Single<GoogleMap> {
+        return Single.create<GoogleMap> { emitter ->
             try {
-                MapsInitializer.initialize(context)
+                context?.let { contextInner ->
+                    MapsInitializer.initialize(contextInner)
 
-                this.mapView?.getMapAsync { mMap ->
-                    googleMap = mMap
+                    this.mapView?.getMapAsync { mMap ->
+                        googleMap = mMap
 
-                    setupLocationService(fragment)
-                    emitter.onNext(mMap)
-                    emitter.onComplete()
+                        setupLocationService(contextInner)
+
+                        mMap?.let { map ->
+                            emitter.onSuccess(map)
+                        } ?: kotlin.run {
+                            emitter.onError(Throwable(NullPointerException("Failed initializing map")))
+                        }
+                    }
+                } ?: kotlin.run {
+                    emitter.onError(Throwable(NullPointerException("Context is null. Try calling setupMap from onResume()")))
                 }
             } catch (e: Exception) {
                 emitter.onError(e)
@@ -87,10 +97,22 @@ object MapController {
         }
     }
 
-    fun setupLocationService(fragment: Fragment) {
+    fun getMarkerObserver(): Observable<Marker> {
+        return Observable.create<Marker> { emitter ->
+            googleMap?.let {
+                setAnnotationListener(it, GoogleMap.OnMarkerClickListener { marker ->
+                    emitter.onNext(marker)
+                    true
+                })
+            }
+                    ?: kotlin.run { emitter.onError(NullPointerException("Map is null. Try calling setupMap() before calling getAnnotationObserver()")) }
+        }
+    }
+
+    private fun setupLocationService(context: Context) {
         mapView?.context?.let { contextInner ->
             if (!LocationController.hasDeviceLocationPermission(contextInner)) {
-                LocationController.requestPermission(fragment, null)
+                LocationController.requestPermission(context, null)
             }
 
             if (!LocationController.isProviderEnabled(contextInner)) {
@@ -102,7 +124,7 @@ object MapController {
     }
 
     @SuppressLint("MissingPermission") // Checked in LocationController
-    fun enableMyLocation(zoomToMyLocation: Boolean = false): Boolean? {
+    private fun enableMyLocation(zoomToMyLocation: Boolean = false): Boolean? {
         mapView?.context?.let { contextInner ->
             if (LocationController.hasFullPermissionAndIsProviderEnable(contextInner) && googleMap?.isMyLocationEnabled != true) {
                 googleMap?.isMyLocationEnabled = true
@@ -120,7 +142,7 @@ object MapController {
         return googleMap?.isMyLocationEnabled
     }
 
-    fun zoomCameraTo(location: Location?, zoom: Float?) {
+    private fun zoomCameraTo(location: Location?, zoom: Float?) {
         getLatLngFromLocation(location)?.let { latLgn ->
             var cameraBuilder = CameraPosition.Builder().target(latLgn)
             zoom?.let { cameraBuilder = cameraBuilder.zoom(it) }
@@ -161,8 +183,8 @@ object MapController {
                 .build()))
     }
 
-    fun setAnnotationListener(annotationListener: GoogleMap.OnMarkerClickListener) {
-        googleMap?.setOnMarkerClickListener(annotationListener)
+    private fun setAnnotationListener(map: GoogleMap, annotationListener: GoogleMap.OnMarkerClickListener) {
+        map.setOnMarkerClickListener(annotationListener)
     }
 
     private fun getLatLngFromLocation(location: Location?): LatLng? {

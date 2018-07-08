@@ -6,7 +6,7 @@ import android.os.Build
 import android.support.multidex.MultiDex
 import com.squareup.picasso.LruCache
 import com.squareup.picasso.Picasso
-import lam.com.locationmapservice.lib.activities.LMSActivity
+import lam.com.locationmapservice.demo.activities.DemoActivity
 
 class ApplicationController : Application() {
     private var defaultUEH: Thread.UncaughtExceptionHandler? = null
@@ -14,7 +14,7 @@ class ApplicationController : Application() {
     var isActivityVisible: Boolean = false
         private set
 
-    var currentActivity: LMSActivity? = null
+    var currentActivity: DemoActivity? = null
         private set(activity) {
             field = activity
         }
@@ -42,6 +42,7 @@ class ApplicationController : Application() {
         super.attachBaseContext(base)
         MultiDex.install(this)
     }
+
     override fun onCreate() {
         super.onCreate()
         instanceCompanion = this
@@ -70,7 +71,7 @@ class ApplicationController : Application() {
         Picasso.setSingletonInstance(picassoBuilder.build())
     }
 
-    fun activityResumed(activity: LMSActivity) {
+    fun activityResumed(activity: DemoActivity) {
         currentActivity = activity
         isActivityVisible = true
     }

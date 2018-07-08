@@ -20,7 +20,6 @@ import com.afollestad.materialdialogs.MaterialDialog
 import kotlinx.android.synthetic.main.dialog_action_item.view.*
 import kotlinx.android.synthetic.main.shared_dialog.view.*
 import lam.com.locationmapservice.R
-import lam.com.locationmapservice.lib.activities.LMSActivity
 import lam.com.locationmapservice.lib.utils.ImageLoader
 import lam.com.locationmapservice.lib.views.dialog.adapters.MultipleChoiceAdapter
 import lam.com.locationmapservice.lib.views.dialog.adapters.SingleChoiceAdapter
@@ -347,13 +346,11 @@ open class Dialog : LinearLayout {
                     }
                     .dismissListener({
                         Dialog.isShowing = false
-                        (context as? LMSActivity)?.currentDialog = null
                     })
                     .showListener({
                         Dialog.isShowing = true
                     })
                     .build()
-            (context as? LMSActivity)?.currentDialog = dialog
             return dialog
         }
 
@@ -396,7 +393,7 @@ open class Dialog : LinearLayout {
                         it.getString(R.string.shared_dialog_close_app_title),
                         DialogActionItemModel(it.getString(R.string.shared_action_cancel), null),
                         DialogActionItemModel(it.getString(R.string.shared_dialog_close_app_action_accept), Runnable {
-                            (context as? LMSActivity)?.finish()
+                            (context as? Activity)?.finish()
                         })
                 )
             }

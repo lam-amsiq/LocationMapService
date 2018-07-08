@@ -2,6 +2,7 @@ package lam.com.locationmapservice.lib.controllers.location
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,13 +13,11 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.schedulers.Schedulers
 import lam.com.locationmapservice.R
-import lam.com.locationmapservice.lib.activities.LMSActivity
 import lam.com.locationmapservice.lib.enums.LocationUpdateType
 import lam.com.locationmapservice.lib.exceptions.location.MissingDevicePermissionException
 import lam.com.locationmapservice.lib.models.LocationUpdate
@@ -30,6 +29,7 @@ object LocationController {
     const val LOCATION_ENABLE_REQUEST_CODE = 4000
     const val LOCATION_PERMISSION_REQUEST_CODE = 4001
     const val LOCATION_PERMISSION_REQUEST_CODE_RATIONAL = 4002
+
     private const val PROVIDER = LocationManager.NETWORK_PROVIDER
     private val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
     private var isShowingNativePrompt = false
@@ -42,7 +42,6 @@ object LocationController {
             Observable.create<LocationUpdate> { emitter -> this.emitter = emitter }
                     .observeOn(Schedulers.io())
         }
-
 
     private val locationListener = object : android.location.LocationListener {
         override fun onLocationChanged(location: Location?) {
@@ -94,18 +93,19 @@ object LocationController {
                     emitter?.onComplete()
                 }),
                 DialogActionItemModel(context?.getString(R.string.shared_action_ok), Runnable {
-                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    (context as? LMSActivity)?.let { activity ->
+                    (context as? Activity)?.let { activity ->
+                        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                         ActivityCompat.startActivityForResult(activity, intent, LOCATION_ENABLE_REQUEST_CODE, null)
                     }
                 }))
     }
 
-    private fun goToSettings(fragment: Fragment) {
-        fragment.context?.let { context ->
-            val myAppSettings = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + context.packageName))
-            myAppSettings.addCategory(Intent.CATEGORY_DEFAULT)
-            fragment.startActivityForResult(myAppSettings, LOCATION_PERMISSION_REQUEST_CODE_RATIONAL)
+    private fun goToSettings(context: Context) {
+        (context as? Activity)?.let { activity ->
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + context.packageName))
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+
+            ActivityCompat.startActivityForResult(activity, intent, LOCATION_PERMISSION_REQUEST_CODE_RATIONAL, null)
         }
     }
 
@@ -147,21 +147,25 @@ object LocationController {
         return context?.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
     }
 
-    fun requestPermission(fragment: Fragment?, cancelAction: Runnable? = null) {
-        if (shouldRequestRational(fragment)) {
-            fragment?.let { showDialogAccessDenied(it, cancelAction) }
+    fun requestPermission(context: Context?, cancelAction: Runnable? = null) {
+        if (shouldRequestRational(context)) {
+            showDialogAccessDenied(context, cancelAction)
         } else {
             isShowingNativePrompt = true
-            fragment?.requestPermissions(
-                    permissions,
-                    LOCATION_PERMISSION_REQUEST_CODE)
+            (context as? Activity)?.let { activity ->
+                ActivityCompat.requestPermissions(activity,
+                        permissions,
+                        LOCATION_PERMISSION_REQUEST_CODE)
+            }
         }
     }
 
-    private fun shouldRequestRational(fragment: Fragment?): Boolean {
+    private fun shouldRequestRational(context: Context?): Boolean {
         var showRational = false
-        permissions.forEach { permission ->
-            showRational = fragment?.shouldShowRequestPermissionRationale(permission) == true
+        (context as? Activity)?.let { activity ->
+            permissions.forEach { permission ->
+                showRational = ActivityCompat.shouldShowRequestPermissionRationale(activity, permission) == true
+            }
         }
         return showRational
     }
@@ -183,25 +187,29 @@ object LocationController {
         return getLocationManager(context)?.isProviderEnabled(PROVIDER) == true
     }
 
-    private fun showDialogAccessDenied(fragment: Fragment, cancelAction: Runnable? = null) {
-        fragment.context?.let { context ->
-            Dialog.show(context, null, context.resources?.getString(R.string.location_dialog_access_denied_title), context.resources?.getString(R.string.location_dialog_access_denied_content),
-                    DialogActionItemModel(context.resources?.getString(R.string.location_dialog_access_denied_action_negative), cancelAction),
-                    DialogActionItemModel(context.resources?.getString(R.string.location_dialog_access_denied_action_positive), Runnable {
-                        goToSettings(fragment)
+    private fun showDialogAccessDenied(context: Context?, cancelAction: Runnable? = null) {
+        context?.let { contextInner ->
+            Dialog.show(context, null, contextInner.resources?.getString(R.string.location_dialog_access_denied_title), contextInner.resources?.getString(R.string.location_dialog_access_denied_content),
+                    DialogActionItemModel(contextInner.resources?.getString(R.string.location_dialog_access_denied_action_negative), cancelAction),
+                    DialogActionItemModel(contextInner.resources?.getString(R.string.location_dialog_access_denied_action_positive), Runnable {
+                        goToSettings(contextInner)
                     }))
         }
     }
 
     private fun showDialogNoInternet(context: Context?) {
-        Dialog.show(context, null, context?.resources?.getString(R.string.location_dialog_no_internet_title), context?.resources?.getString(R.string.location_dialog_no_internet_content),
-                DialogActionItemModel(context?.resources?.getString(R.string.location_dialog_no_internet_action), null)
-        )
+        context?.let { contextInner ->
+            Dialog.show(contextInner, null, contextInner.resources?.getString(R.string.location_dialog_no_internet_title), contextInner.resources?.getString(R.string.location_dialog_no_internet_content),
+                    DialogActionItemModel(contextInner.resources?.getString(R.string.location_dialog_no_internet_action), null)
+            )
+        }
     }
 
     private fun showDialogEnabledFailed(context: Context?) {
-        Dialog.show(context, null, context?.resources?.getString(R.string.location_dialog_error_enable_title), context?.resources?.getString(R.string.location_dialog_error_enable_content),
-                DialogActionItemModel(context?.resources?.getString(R.string.location_dialog_error_enable_action), null)
-        )
+        context?.let { contextInner ->
+            Dialog.show(context, null, contextInner.resources?.getString(R.string.location_dialog_error_enable_title), contextInner.resources?.getString(R.string.location_dialog_error_enable_content),
+                    DialogActionItemModel(contextInner.resources?.getString(R.string.location_dialog_error_enable_action), null)
+            )
+        }
     }
 }

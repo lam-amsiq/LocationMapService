@@ -33,7 +33,7 @@ open class Dialog : LinearLayout {
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    internal var adapter: BaseAdapter? = null
+    private var adapter: BaseAdapter? = null
     private var maxLimit: Int? = null
 
     private fun setup(illustration: Any?, title: String?, textContent: String?, cancelAction: DialogActionItemModel?, actions: Array<out DialogActionItemModel>, dialog: MaterialDialog?): Dialog {
@@ -306,7 +306,7 @@ open class Dialog : LinearLayout {
                 val dialog = attachToDialog(activity, view, cancelAction?.action)
 
                 view.setup(illustrationResId, title, textContent, cancelAction, actions, dialog)
-                return show(context, dialog, cancelable)
+                return show(dialog, cancelable)
             } ?: return null
         }
 
@@ -316,7 +316,7 @@ open class Dialog : LinearLayout {
                 val dialog = attachToDialog(activity, view, cancelAction?.action)
 
                 view.setupSelectList(illustrationResId, title, textContent, cancelAction, items, dialog, listCallback, selection)
-                return show(context, dialog, cancelable)
+                return show(dialog, cancelable)
             } ?: return null
         }
 
@@ -327,7 +327,7 @@ open class Dialog : LinearLayout {
                 val dialog = attachToDialog(activity, view, cancelAction?.action)
 
                 view.setupMultiple(illustrationResId, title, textContent, cancelAction, items, dialog, listCallback, maxLimit, selections)
-                return show(context, dialog, cancelable)
+                return show(dialog, cancelable)
             } ?: return null
         }
 
@@ -344,17 +344,17 @@ open class Dialog : LinearLayout {
                     .cancelListener {
                         cancelAction?.run()
                     }
-                    .dismissListener({
+                    .dismissListener {
                         Dialog.isShowing = false
-                    })
-                    .showListener({
+                    }
+                    .showListener {
                         Dialog.isShowing = true
-                    })
+                    }
                     .build()
             return dialog
         }
 
-        private fun show(context: Context, dialog: MaterialDialog?, cancelable: Boolean): MaterialDialog? {
+        private fun show(dialog: MaterialDialog?, cancelable: Boolean): MaterialDialog? {
 
             dialog?.setCancelable(cancelable)
             dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

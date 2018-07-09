@@ -5,19 +5,25 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.heatmaps.Gradient
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.exceptions.RealmMigrationNeededException
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.lib.controllers.location.LocationController
 import lam.com.locationmapservice.lib.models.Location
+import lam.com.locationmapservice.lib.models.Annotation
 
 object MapController {
     private var mapView: MapView? = null
     private var googleMap: GoogleMap? = null
+    private var realmConfig: RealmConfiguration? = null
 
     private val heatmapGradient: Gradient? = null
         get() = field?.let { it }
@@ -45,11 +51,42 @@ object MapController {
     }
 
     fun onDestroy() {
+        MapController.realmConfig?.let { config ->
+            val deleteRealm = Realm.deleteRealm(config)
+            Log.d("realm", "Delete realm: $deleteRealm")
+        }
         mapView?.onDestroy()
     }
 
     fun onLowMemory() {
         mapView?.onLowMemory()
+    }
+
+    fun realmInit(context: Context?) {
+        context?.let { contextInner ->
+            Realm.init(contextInner)
+            realmConfig = RealmConfiguration.Builder()
+                    .deleteRealmIfMigrationNeeded()
+                    .name("map.realm").build()
+        }
+    }
+
+    fun getRealm(): Realm? {
+        try {
+            realmConfig?.let { config ->
+                Realm.getInstance(config)?.let { realm ->
+                    return realm
+                }
+            }
+        } catch (e: RealmMigrationNeededException) {
+            realmConfig?.let { config ->
+                Realm.migrateRealm(config)
+                Realm.getInstance(config)?.let { realm ->
+                    return realm
+                }
+            }
+        }
+        return null
     }
 
     fun onRequestPermissionsResult(requestCode: Int) {
@@ -97,11 +134,20 @@ object MapController {
         }
     }
 
-    fun getMarkerObserver(): Observable<Marker> {
-        return Observable.create<Marker> { emitter ->
+    fun getMarkerObserver(): Observable<Pair<Annotation, Marker>> {
+        return Observable.create<Pair<Annotation, Marker>> { emitter ->
             googleMap?.let {
                 setAnnotationListener(it, GoogleMap.OnMarkerClickListener { marker ->
-                    emitter.onNext(marker)
+                    getRealm()?.let { realm ->
+                        val annotation = realm.where(Annotation::class.java)
+                                .equalTo("marker_id", marker.id)
+                                .findFirst()?.let {
+                                    val annotation = realm.copyFromRealm(it)
+                                    realm.close()
+
+                                    emitter.onNext(Pair<Annotation, Marker>(annotation, marker))
+                                }
+                    }
                     true
                 })
             }
@@ -131,7 +177,7 @@ object MapController {
 
                 if (zoomToMyLocation) {
                     LocationController.getCachedLocation(contextInner)?.let { location ->
-                        zoomCameraTo(Location(-1, true, location.latitude, location.longitude), 12f)
+                        zoomCameraTo(Location(location.latitude, location.longitude), 12f)
                     } ?: kotlin.run {
                         googleMap?.isMyLocationEnabled = false
                         LocationController.askUserToTurnOnLocationServices(contextInner)
@@ -165,14 +211,16 @@ object MapController {
         return null
     }
 
-    fun addAnnotation(position: LatLng, icon: Int): Marker? {
+    fun addAnnotation(position: Location, icon: Int): Marker? {
         return addAnnotation(position, BitmapDescriptorFactory.fromResource(icon))
     }
 
-    fun addAnnotation(position: LatLng, icon: BitmapDescriptor): Marker? {
-        return googleMap?.addMarker(MarkerOptions()
-                .position(position)
-                .icon(icon))
+    fun addAnnotation(position: Location, icon: BitmapDescriptor): Marker? {
+        return googleMap?.addMarker(position.toLatLng()?.let { position ->
+            MarkerOptions()
+                    .position(position)
+                    .icon(icon)
+        })
     }
 
     fun addHeatmap(data: List<LatLng>): TileOverlay? {

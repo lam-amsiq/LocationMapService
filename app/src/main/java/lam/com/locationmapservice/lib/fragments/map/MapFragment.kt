@@ -7,18 +7,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.squareup.picasso.Picasso
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_map.*
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.lib.fragments.LMSFragment
@@ -28,11 +29,11 @@ import lam.com.locationmapservice.lib.models.Annotation
 
 @EFragment(R.layout.fragment_map)
 open class MapFragment : LMSFragment() {
-    private val annotationMap: HashMap<String, Annotation?> = HashMap()
     var isMapSetup: Boolean? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_map, container, false)
+        MapController.realmInit(context)
         MapController.setupMapView(rootView.findViewById(R.id.mapView), savedInstanceState)
 
         return rootView
@@ -44,27 +45,47 @@ open class MapFragment : LMSFragment() {
                 .doOnError { isMapSetup = false }
     }
 
-    fun getAnnotationObserver(): Observable<Marker>? {
+    fun getAnnotationObserver(): Observable<Pair<Annotation, Marker>>? {
         return MapController.getMarkerObserver()
     }
 
-    fun addAnnotation(position: LatLng?, info: Annotation?, icon: Int) {
-        position?.let { positionInner ->
-            getBitmapSingle(Picasso.get(), icon, 100)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ bitmap ->
-                        val marker = MapController.addAnnotation(positionInner, BitmapDescriptorFactory.fromBitmap(bitmap))
-                        marker?.id?.let { markerId ->
-                            info?.annotationId = markerId
-                            annotationMap[markerId] = info
-                        }
-                    }, Throwable::printStackTrace)
+    fun setAnnotations(jsonString: String?) {
+        jsonString?.let { jsonStr ->
+            setAnnotations(Annotation.jsonStringToAnnotationArray(jsonStr))
         }
     }
 
-    fun getAnnotationFromMarker(markerId: String): Annotation? {
-        return annotationMap[markerId]
+    fun setAnnotations(annotationArray: Array<Annotation?>) {
+        MapController.getRealm()?.let { realm ->
+            realm.beginTransaction()
+            Log.d("realm", "Delete: isInTransaction = ${realm.isInTransaction}")
+            realm.delete(Annotation::class.java)
+            realm.commitTransaction()
+
+            annotationArray.forEach { annotation ->
+                addAnnotation(realm, annotation)
+            }
+        }
+    }
+
+    private fun addAnnotation(realm: Realm, annotation: Annotation?) {
+        annotation?.position?.let { position ->
+            annotation.image?.let { image ->
+
+            } ?: kotlin.run {
+                getBitmapSingle(Picasso.get(), R.drawable.as_shared_default_picture_female_round, 100)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ bitmap ->
+                            MapController.addAnnotation(position, BitmapDescriptorFactory.fromBitmap(bitmap))?.id?.let { markerId ->
+                                annotation.marker_id = markerId
+                                realm.beginTransaction()
+                                annotation.store(realm, annotation)
+                                realm.commitTransaction()
+                            }
+                        }, Throwable::printStackTrace)
+            }
+        }
     }
 
     fun showAnnotation(view: View, anim: AnimatorSet) {
@@ -114,8 +135,8 @@ open class MapFragment : LMSFragment() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         MapController.onDestroy()
+        super.onDestroy()
     }
 
     override fun onLowMemory() {

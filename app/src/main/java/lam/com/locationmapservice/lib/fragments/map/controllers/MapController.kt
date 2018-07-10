@@ -189,8 +189,8 @@ object MapController {
     }
 
     private fun zoomCameraTo(location: Location?, zoom: Float?) {
-        getLatLngFromLocation(location)?.let { latLgn ->
-            var cameraBuilder = CameraPosition.Builder().target(latLgn)
+        location?.toLatLng()?.let { latLng ->
+            var cameraBuilder = CameraPosition.Builder().target(latLng)
             zoom?.let { cameraBuilder = cameraBuilder.zoom(it) }
 
             googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()))
@@ -215,10 +215,17 @@ object MapController {
         return addAnnotation(position, BitmapDescriptorFactory.fromResource(icon))
     }
 
-    fun addAnnotation(position: Location, icon: BitmapDescriptor): Marker? {
-        return googleMap?.addMarker(position.toLatLng()?.let { position ->
+    fun addAnnotation(position: Location): Marker? {
+        return googleMap?.addMarker(position.toLatLng()?.let { latLng ->
             MarkerOptions()
-                    .position(position)
+                    .position(latLng)
+        })
+    }
+
+    fun addAnnotation(position: Location, icon: BitmapDescriptor): Marker? {
+        return googleMap?.addMarker(position.toLatLng()?.let { latLng ->
+            MarkerOptions()
+                    .position(latLng)
                     .icon(icon)
         })
     }
@@ -233,14 +240,5 @@ object MapController {
 
     private fun setAnnotationListener(map: GoogleMap, annotationListener: GoogleMap.OnMarkerClickListener) {
         map.setOnMarkerClickListener(annotationListener)
-    }
-
-    private fun getLatLngFromLocation(location: Location?): LatLng? {
-        location?.position_latitude?.let { lat ->
-            location.position_longitude?.let { lng ->
-                return LatLng(lat, lng)
-            }
-        }
-        return null
     }
 }

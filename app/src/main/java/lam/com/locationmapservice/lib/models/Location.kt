@@ -4,12 +4,12 @@ import com.google.android.gms.maps.model.LatLng
 import io.realm.RealmObject
 
 open class Location(
-        var position_latitude: Double? = null,
-        var position_longitude: Double? = null) : RealmObject() {
+        var lat: Double? = null,
+        var lng: Double? = null) : RealmObject() {
 
     fun toLatLng(): LatLng? {
-        return position_latitude?.let { lat ->
-            position_longitude?.let { lng ->
+        return lat?.let { lat ->
+            lng?.let { lng ->
                 LatLng(lat, lng)
             }
         }

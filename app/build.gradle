@@ -17,6 +17,8 @@ android {
         renderscriptSupportModeEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "BASEURLAPI", "\"http://nasie.diskstation.me:7070/locationmapwebservice/api/\""
+        buildConfigField "String", "BASEURLWEB", "\"http://nasie.diskstation.me:7070/locationmapwebservice\""
     }
     dataBinding {
         enabled = true
@@ -62,6 +64,12 @@ dependencies {
     implementation 'org.androidannotations:androidannotations-api:' + AAVersion
     // Gson
     implementation 'com.google.code.gson:gson:' + gson
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:' + RetrofitVersion,
+            'com.squareup.retrofit2:converter-gson:' + RetrofitVersion,
+            'com.squareup.retrofit2:adapter-rxjava2:' + RetrofitVersion
+    // Okhhtp
+    implementation 'com.squareup.okhttp3:logging-interceptor:' + OkhttpVersion
     // RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     // https://github.com/ReactiveX/RxAndroid/releases

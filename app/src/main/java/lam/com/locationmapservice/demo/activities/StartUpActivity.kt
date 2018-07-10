@@ -6,7 +6,8 @@ import android.util.Log
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import lam.com.locationmapservice.R
-import lam.com.locationmapservice.demo.dummyData.AnnotationDummy
+import lam.com.locationmapservice.demo.api.ApiService
+import lam.com.locationmapservice.demo.api.interfaces.IDummyAnnotationApi
 import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
 import lam.com.locationmapservice.lib.fragments.map.MapFragment
 import lam.com.locationmapservice.lib.fragments.map.MapFragment_
@@ -44,7 +45,15 @@ open class StartUpActivity : DemoActivity() {
                                 }
 
                         // Add dummy annotations
-                        mapFragment?.setAnnotations(AnnotationDummy.jsonAnnotationList)
+                        ApiService.createService(IDummyAnnotationApi::class.java).getDummyAnnotations()
+                                .compose(bindToLifecycle())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.io())
+                                .subscribe { response ->
+                                    Log.d("retrofit", "Get annotation success: $response")
+                                    mapFragment?.setAnnotations(response.toTypedArray())
+                                }
+
                     }, {
                         Log.d("startup", "Map setup error: $it")
                     })

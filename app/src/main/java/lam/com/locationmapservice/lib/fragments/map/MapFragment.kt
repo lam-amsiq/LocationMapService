@@ -19,13 +19,13 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_map.*
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.lib.fragments.LMSFragment
 import org.androidannotations.annotations.EFragment
 import lam.com.locationmapservice.lib.fragments.map.controllers.MapController
 import lam.com.locationmapservice.lib.models.Annotation
+import lam.com.locationmapservice.lib.utils.extensions.load
 
 @EFragment(R.layout.fragment_map)
 open class MapFragment : LMSFragment() {
@@ -62,30 +62,39 @@ open class MapFragment : LMSFragment() {
             realm.delete(Annotation::class.java)
             realm.commitTransaction()
 
+            // Add annotations
+            realm.beginTransaction()
             annotationArray.forEach { annotation ->
-                addAnnotation(realm, annotation)
+                addAnnotation(annotation)?.let { marker ->
+                    Log.d("map", "Annotation ${annotation?.annotation_id} added=${marker.id}")
+                    annotation?.marker_id = marker.id
+                    annotation?.store(realm)
+
+                    setAnnotationImage(marker, annotation?.image)
+                } ?: kotlin.run {
+                    Log.d("map", "Annotation ${annotation?.annotation_id} added=FAILED")
+                }
             }
+            realm.commitTransaction()
+            realm.close()
         }
     }
 
-    private fun addAnnotation(realm: Realm, annotation: Annotation?) {
-        annotation?.position?.let { position ->
-            annotation.image?.let { image ->
-
-            } ?: kotlin.run {
-                getBitmapSingle(Picasso.get(), R.drawable.as_shared_default_picture_female_round, 100)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ bitmap ->
-                            MapController.addAnnotation(position, BitmapDescriptorFactory.fromBitmap(bitmap))?.id?.let { markerId ->
-                                annotation.marker_id = markerId
-                                realm.beginTransaction()
-                                annotation.store(realm, annotation)
-                                realm.commitTransaction()
-                            }
-                        }, Throwable::printStackTrace)
-            }
+    private fun addAnnotation(annotation: Annotation?): Marker? {
+        return annotation?.position?.let { position ->
+            MapController.addAnnotation(position)
         }
+    }
+
+    private fun setAnnotationImage(marker: Marker, imageUrl: String?) {
+        getBitmapSingle(Picasso.get(),
+                imageUrl?.let { it }
+                        ?: kotlin.run { R.drawable.as_shared_default_picture_female_round }, 100)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe{ bitmap ->
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                }
     }
 
     fun showAnnotation(view: View, anim: AnimatorSet) {
@@ -113,11 +122,15 @@ open class MapFragment : LMSFragment() {
         anim.start()
     }
 
-    private fun getBitmapSingle(picasso: Picasso, res: Int, size: Int): Single<Bitmap> = Single.create { emitter ->
+    private fun getBitmapSingle(picasso: Picasso, image: Any, size: Int): Single<Bitmap> = Single.create { emitter ->
         try {
             if (!emitter.isDisposed) {
-                val bitmap: Bitmap = picasso.load(res).resize(size, size).get()
-                emitter.onSuccess(bitmap)
+                val bitmap: Bitmap? = picasso.load(image)?.resize(size, size)?.get()
+                bitmap?.let {
+                    emitter.onSuccess(it)
+                } ?: kotlin.run {
+                    emitter.onError(NullPointerException("Failed to get image"))
+                }
             }
         } catch (e: Throwable) {
             emitter.onError(e)

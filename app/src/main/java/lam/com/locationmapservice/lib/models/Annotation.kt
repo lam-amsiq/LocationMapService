@@ -14,17 +14,17 @@ open class Annotation(
         var position: Location? = null,
         var marker_id: String? = null) : RealmObject() {
 
-    fun store(realm: Realm, annotation: Annotation) {
+    fun store(realm: Realm) {
         val realmPosition = realm.createObject(Location::class.java)
-        realmPosition.position_latitude = annotation.position?.position_latitude
-        realmPosition.position_longitude = annotation.position?.position_longitude
+        realmPosition.lat = this.position?.lat
+        realmPosition.lng = this.position?.lng
 
-        val realmAnnotation = realm.createObject(Annotation::class.java, annotation.annotation_id)
+        val realmAnnotation = realm.createObject(Annotation::class.java, this.annotation_id)
         realmAnnotation.position = realmPosition
 
-        realmAnnotation.image = annotation.image
-        realmAnnotation.marker_id = annotation.marker_id
-        realmAnnotation.title = annotation.title
+        realmAnnotation.image = this.image
+        realmAnnotation.marker_id = this.marker_id
+        realmAnnotation.title = this.title
     }
 
     companion object {

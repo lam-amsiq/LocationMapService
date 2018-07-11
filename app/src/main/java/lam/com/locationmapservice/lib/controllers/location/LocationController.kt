@@ -171,7 +171,10 @@ object LocationController {
     }
 
     fun hasFullPermissionAndIsProviderEnable(context: Context?): Boolean {
-        return hasDeviceLocationPermission(context) && isProviderEnabled(context)
+        val hasPermission = hasDeviceLocationPermission(context)
+        val isEnable = isProviderEnabled(context)
+
+        return hasPermission && isEnable
     }
 
     fun hasDeviceLocationPermission(context: Context?): Boolean {

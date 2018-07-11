@@ -15,17 +15,19 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Transformation
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.fragment_map.*
+import lam.com.locationmapservice.BuildConfig
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.lib.fragments.LMSFragment
 import org.androidannotations.annotations.EFragment
 import lam.com.locationmapservice.lib.fragments.map.controllers.MapController
 import lam.com.locationmapservice.lib.models.Annotation
-import lam.com.locationmapservice.lib.utils.extensions.load
 
 @EFragment(R.layout.fragment_map)
 open class MapFragment : LMSFragment() {
@@ -87,12 +89,10 @@ open class MapFragment : LMSFragment() {
     }
 
     private fun setAnnotationImage(marker: Marker, imageUrl: String?) {
-        getBitmapSingle(Picasso.get(),
-                imageUrl?.let { it }
-                        ?: kotlin.run { R.drawable.as_shared_default_picture_female_round }, 100)
+        getBitmapSingle(Picasso.get(), BuildConfig.BASEURLAPI + imageUrl, 100)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe{ bitmap ->
+                .subscribe { bitmap ->
                     marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
                 }
     }
@@ -122,15 +122,45 @@ open class MapFragment : LMSFragment() {
         anim.start()
     }
 
-    private fun getBitmapSingle(picasso: Picasso, image: Any, size: Int): Single<Bitmap> = Single.create { emitter ->
+    private fun getBitmapSingle(picasso: Picasso, imageUrl: String, size: Int): Observable<Bitmap> = Observable.create { emitter ->
         try {
-            if (!emitter.isDisposed) {
-                val bitmap: Bitmap? = picasso.load(image)?.resize(size, size)?.get()
-                bitmap?.let {
-                    emitter.onSuccess(it)
-                } ?: kotlin.run {
-                    emitter.onError(NullPointerException("Failed to get image"))
+            val scaleTransformation: Transformation = object : Transformation {
+                override fun transform(source: Bitmap?): Bitmap {
+                    val isTall = source?.height ?: 1 > source?.width ?: 1
+
+                    val aspectRatio = (if (isTall) source?.height?.div(source.width) else source?.width?.div(source.height))
+                            ?: 1
+                    val targetHeight = if (isTall) size else size * aspectRatio
+                    val targetWidth = if (isTall) size * aspectRatio else size
+
+                    val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
+                    if (result != source) {
+                        source?.recycle()
+                    }
+                    return result
                 }
+
+                override fun key(): String {
+                    return "cropPosterTransformation$size"
+                }
+            }
+
+            if (!emitter.isDisposed) {
+                picasso.load(R.drawable.as_shared_default_picture_female_round)
+                        .resize(size, size)
+                        .noFade()
+                        .get()?.let { placeholder ->
+                            emitter.onNext(placeholder)
+                        }
+
+                picasso.load(imageUrl)
+                        .transform(arrayListOf(CropCircleTransformation(), scaleTransformation))
+                        .noFade()
+                        .get()?.let { profileImage ->
+                            emitter.onNext(profileImage)
+                        }
+
+                emitter.onComplete()
             }
         } catch (e: Throwable) {
             emitter.onError(e)

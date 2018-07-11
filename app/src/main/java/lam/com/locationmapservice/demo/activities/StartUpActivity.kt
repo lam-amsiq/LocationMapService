@@ -7,7 +7,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.demo.api.ApiService
-import lam.com.locationmapservice.demo.api.interfaces.IDummyAnnotationApi
+import lam.com.locationmapservice.demo.api.interfaces.IDummyApi
 import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
 import lam.com.locationmapservice.lib.fragments.map.MapFragment
 import lam.com.locationmapservice.lib.fragments.map.MapFragment_
@@ -45,7 +45,8 @@ open class StartUpActivity : DemoActivity() {
                                 }
 
                         // Add dummy annotations
-                        ApiService.createService(IDummyAnnotationApi::class.java).getDummyAnnotations()
+                        ApiService.createService(IDummyApi::class.java)
+                                .getDummyAnnotations(55.0f, 56.0f, 12.0f, 13.0f)
                                 .compose(bindToLifecycle())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribeOn(Schedulers.io())

@@ -77,7 +77,7 @@ dependencies {
     // https://github.com/ReactiveX/RxJava/releases
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
     // https://github.com/ReactiveX/RxKotlin/releases
-    implementation 'com.github.davidmoten:rxjava2-extras:0.1.24'
+    implementation 'com.github.davidmoten:rxjava2-extras:0.1.26'
     // https://github.com/davidmoten/rxjava2-extras/releases
     implementation 'com.trello.rxlifecycle2:rxlifecycle:' + trelloRxlifecycle,
             'com.trello.rxlifecycle2:rxlifecycle-components:' + trelloRxlifecycle

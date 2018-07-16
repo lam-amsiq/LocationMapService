@@ -10,6 +10,7 @@ import java.util.*
 class HeatmapMathsTest {
     @Test
     fun getDistance() {
+        println("\nTest getDistance")
         var location1 = Location(0.0, 0.0)
         var location2 = Location(0.0, 0.0)
         var expected = 0.0
@@ -49,10 +50,13 @@ class HeatmapMathsTest {
         location2 = Location(0.0, 4.01)
         actual = HeatmapMaths.getDistance(location1, location2)
         assertNull(actual)
+
+        println("Test getDistance - SUCCESS")
     }
 
     @Test
-    fun computeHeatmaps() {
+    fun mapAnnotations() {
+        println("\nTest mapAnnotations")
         val annotations = LinkedList(arrayListOf(
                 Annotation(10, "Joanne Rowling", null, Location(55.628,12.082)),
                 Annotation(9, "Irma Pince", null, Location(55.6336,12.0837)),
@@ -85,6 +89,51 @@ class HeatmapMathsTest {
 
         val actual = HeatmapMaths.mapAnnotations(annotations, .05, true)
 
+        println("Mapped annotations:")
+        actual.forEach { entry ->
+            println("${entry.key}->${entry.value}")
+        }
+
         assertEquals(expected, actual)
+
+        println("Test mapAnnotations - SUCCESS")
+    }
+
+    @Test
+    fun computeHashmaps() {
+        println("\nTest computeHashmaps")
+        val annotations = LinkedList(arrayListOf(
+                Annotation(10, "Joanne Rowling", null, Location(55.628,12.082)),
+                Annotation(9, "Irma Pince", null, Location(55.6336,12.0837)),
+                Annotation(11, "Katie Bell", null, Location(55.6427,12.0793)),
+                Annotation(12, "Luna Lovegood", null, Location(55.6505,12.0789)),
+                Annotation(6, "Fleur Delacour", null, Location(55.6733,12.5658)),
+                Annotation(5, "Emmeline Vance", null, Location(55.6736,12.5679)),
+                Annotation(8, "Hermione Granger", null, Location(55.6749,12.5641)),
+                Annotation(7, "Ginny Weasley", null, Location(55.6763,12.5683)),
+                Annotation(4, "Dolores Umbridge", null, Location(55.72,12.425)),
+                Annotation(1, "Amelia Bones", null, Location(55.725,12.4375)),
+                Annotation(2, "Bellatrix Lestrange", null, Location(55.735,12.437)),
+                Annotation(3, "Cho Chang", null, Location(55.74,12.44)),
+                Annotation(13, "Minerva McGonagall", null, Location(56.1266,12.3085))))
+
+        val expected = Pair(arrayListOf(
+                arrayListOf(10L,9L,11L,12L),
+                arrayListOf(6L,5L,8L,7L),
+                arrayListOf(4L,1L,2L,3L)
+                ), arrayListOf(13L))
+
+        val actual = HeatmapMaths.computeHashmaps(annotations, .05, true)
+
+        println("Heatmaps:")
+        actual.first.forEach { heatmap ->
+            println(heatmap)
+        }
+        println("remaining:")
+        println(actual.second)
+
+        assertEquals(expected, actual)
+
+        println("Test computeHeatmaps - SUCCESS")
     }
 }

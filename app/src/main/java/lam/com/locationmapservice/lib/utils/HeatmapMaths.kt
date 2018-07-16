@@ -7,7 +7,47 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 object HeatmapMaths {
-    fun mapAnnotations(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): HashMap<Long, ArrayList<Long>> {
+    fun computeHashmaps(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): Pair<ArrayList<ArrayList<Long>>, ArrayList<Long>> {
+        val heatmaps = arrayListOf<ArrayList<Long>>()
+        val remaining: List<Long>
+        val annotationMap = HeatmapMaths.mapAnnotations(annotationList, groupDistance, isSortedByLatitudeAsc)
+
+        var group: ArrayList<Long>
+        annotationList.forEach { annotation ->
+            annotationMap[annotation.annotation_id]?.let { pairList ->
+                if (pairList.isNotEmpty()) {
+                    group = arrayListOf()
+
+                    annotationMap.remove(annotation.annotation_id)
+                    pairList.forEach { pairedId ->
+                        annotationMap.remove(pairedId)
+                        traverseAnnotationMap(pairedId, annotationMap, group)
+                    }
+                    group.add(annotation.annotation_id)
+                    group.addAll(pairList)
+                    heatmaps.add(group)
+                }
+            }
+        }
+
+        remaining = ArrayList(annotationMap.keys.toList())
+        return Pair(heatmaps, remaining)
+    }
+
+    private fun traverseAnnotationMap(annotationId: Long, annotationMap: HashMap<Long, ArrayList<Long>>, group: ArrayList<Long>) {
+        annotationMap[annotationId]?.let { pairList ->
+            annotationMap.remove(annotationId)
+            if (pairList.isNotEmpty()) {
+                group.addAll(pairList)
+
+                pairList.forEach { pairedId ->
+                    traverseAnnotationMap(pairedId, annotationMap, group)
+                }
+            }
+        }
+    }
+
+    internal fun mapAnnotations(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): HashMap<Long, ArrayList<Long>> {
         val matchMap = hashMapOf<Long, ArrayList<Long>>()
 
         if (!isSortedByLatitudeAsc) {

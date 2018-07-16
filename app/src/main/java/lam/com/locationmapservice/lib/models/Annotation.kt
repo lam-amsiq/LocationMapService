@@ -28,6 +28,10 @@ open class Annotation(
         realmAnnotation.title = this.title
     }
 
+    override fun toString(): String {
+        return "Annotation($annotation_id: $title - marker_id=$marker_id, position=$position, image=$image)"
+    }
+
     companion object {
         const val ANNOTATION_ID_JSON_TAG = "annotation_id"
         const val TITLE_JSON_TAG = "title"

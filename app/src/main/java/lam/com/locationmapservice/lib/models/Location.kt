@@ -14,4 +14,8 @@ open class Location(
             }
         }
     }
+
+    override fun toString(): String {
+        return "latLng($lat, $lng)"
+    }
 }

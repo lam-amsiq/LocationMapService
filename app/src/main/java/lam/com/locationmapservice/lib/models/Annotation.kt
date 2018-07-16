@@ -5,6 +5,7 @@ import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.*
 
 open class Annotation(
         @PrimaryKey
@@ -36,9 +37,9 @@ open class Annotation(
         const val POSITION_LNG_JSON_TAG = "lng"
         const val MARKER_ID_JSON_TAG = "marker_id"
 
-        fun jsonStringToAnnotationArray(jsonString: String): Array<Annotation?> {
+        fun jsonStringToAnnotationList(jsonString: String): LinkedList<Annotation?> {
             val jsonArray = JSONArray(jsonString)
-            val annotationArray = arrayOfNulls<Annotation>(jsonArray.length())
+            val annotationList: LinkedList<Annotation?> = LinkedList()
 
             var jsonAnnotation: JSONObject
             var jsonPosition: JSONObject
@@ -46,7 +47,7 @@ open class Annotation(
                 jsonAnnotation = jsonArray.getJSONObject(i)
                 jsonPosition = jsonAnnotation.optJSONObject(Annotation.POSITION_JSON_TAG)
 
-                annotationArray[i] = Annotation(
+                annotationList.addLast( Annotation(
                         jsonAnnotation.getLong(Annotation.ANNOTATION_ID_JSON_TAG),
                         jsonAnnotation.optString(Annotation.TITLE_JSON_TAG, null),
                         jsonAnnotation.optString(Annotation.IMAGE_JSON_TAG, null),
@@ -54,9 +55,9 @@ open class Annotation(
                             Location(position.getDouble(Annotation.POSITION_LAT_JSON_TAG),
                                     position.getDouble(Annotation.POSITION_LNG_JSON_TAG))
                         },
-                        jsonAnnotation.optString(Annotation.MARKER_ID_JSON_TAG, null))
+                        jsonAnnotation.optString(Annotation.MARKER_ID_JSON_TAG, null)))
             }
-            return annotationArray
+            return annotationList
         }
     }
 }

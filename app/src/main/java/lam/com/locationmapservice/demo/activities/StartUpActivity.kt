@@ -12,6 +12,7 @@ import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
 import lam.com.locationmapservice.lib.fragments.map.MapFragment
 import lam.com.locationmapservice.lib.fragments.map.MapFragment_
 import org.androidannotations.annotations.EActivity
+import java.util.*
 
 @SuppressLint("Registered")
 @EActivity(R.layout.activity_start_up)
@@ -52,9 +53,8 @@ open class StartUpActivity : DemoActivity() {
                                 .subscribeOn(Schedulers.io())
                                 .subscribe { response ->
                                     Log.d("retrofit", "Get annotation success: $response")
-                                    mapFragment?.setAnnotations(response.toTypedArray())
+                                    mapFragment?.setAnnotations(LinkedList(response))
                                 }
-
                     }, {
                         Log.d("startup", "Map setup error: $it")
                     })

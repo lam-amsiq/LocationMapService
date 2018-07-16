@@ -28,10 +28,34 @@ import lam.com.locationmapservice.lib.fragments.LMSFragment
 import org.androidannotations.annotations.EFragment
 import lam.com.locationmapservice.lib.fragments.map.controllers.MapController
 import lam.com.locationmapservice.lib.models.Annotation
+import java.util.*
 
 @EFragment(R.layout.fragment_map)
 open class MapFragment : LMSFragment() {
     var isMapSetup: Boolean? = null
+
+    private var annotationSize: Int = 0
+
+    private val scaleTransformation: Transformation = object : Transformation {
+        override fun transform(source: Bitmap?): Bitmap {
+            val isTall = source?.height ?: 1 > source?.width ?: 1
+
+            val aspectRatio = (if (isTall) source?.height?.div(source.width) else source?.width?.div(source.height))
+                    ?: 1
+            val targetHeight = if (isTall) annotationSize else annotationSize * aspectRatio
+            val targetWidth = if (isTall) annotationSize * aspectRatio else annotationSize
+
+            val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
+            if (result != source) {
+                source?.recycle()
+            }
+            return result
+        }
+
+        override fun key(): String {
+            return "cropPosterTransformation$annotationSize"
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_map, container, false)
@@ -41,7 +65,8 @@ open class MapFragment : LMSFragment() {
         return rootView
     }
 
-    fun setup(context: Context): Single<GoogleMap>? {
+    fun setup(context: Context, annotationSize: Int = 100): Single<GoogleMap>? {
+        this.annotationSize = annotationSize
         return MapController.setupMap(context)
                 .doOnSuccess { isMapSetup = true }
                 .doOnError { isMapSetup = false }
@@ -53,11 +78,11 @@ open class MapFragment : LMSFragment() {
 
     fun setAnnotations(jsonString: String?) {
         jsonString?.let { jsonStr ->
-            setAnnotations(Annotation.jsonStringToAnnotationArray(jsonStr))
+            setAnnotations(Annotation.jsonStringToAnnotationList(jsonStr))
         }
     }
 
-    fun setAnnotations(annotationArray: Array<Annotation?>) {
+    fun setAnnotations(annotationArray: LinkedList<Annotation?>) {
         MapController.getRealm()?.let { realm ->
             realm.beginTransaction()
             Log.d("realm", "Delete: isInTransaction = ${realm.isInTransaction}")
@@ -89,7 +114,7 @@ open class MapFragment : LMSFragment() {
     }
 
     private fun setAnnotationImage(marker: Marker, imageUrl: String?) {
-        getBitmapSingle(Picasso.get(), BuildConfig.BASEURLAPI + imageUrl, 100)
+        getAnnotationImage(Picasso.get(), imageUrl, annotationSize)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { bitmap ->
@@ -122,30 +147,10 @@ open class MapFragment : LMSFragment() {
         anim.start()
     }
 
-    private fun getBitmapSingle(picasso: Picasso, imageUrl: String, size: Int): Observable<Bitmap> = Observable.create { emitter ->
+    private fun getAnnotationImage(picasso: Picasso, imageApiExtension: String?, size: Int): Observable<Bitmap> = Observable.create { emitter ->
         try {
-            val scaleTransformation: Transformation = object : Transformation {
-                override fun transform(source: Bitmap?): Bitmap {
-                    val isTall = source?.height ?: 1 > source?.width ?: 1
-
-                    val aspectRatio = (if (isTall) source?.height?.div(source.width) else source?.width?.div(source.height))
-                            ?: 1
-                    val targetHeight = if (isTall) size else size * aspectRatio
-                    val targetWidth = if (isTall) size * aspectRatio else size
-
-                    val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false)
-                    if (result != source) {
-                        source?.recycle()
-                    }
-                    return result
-                }
-
-                override fun key(): String {
-                    return "cropPosterTransformation$size"
-                }
-            }
-
             if (!emitter.isDisposed) {
+                // Get placeholder/default image
                 picasso.load(R.drawable.as_shared_default_picture_female_round)
                         .resize(size, size)
                         .noFade()
@@ -153,16 +158,22 @@ open class MapFragment : LMSFragment() {
                             emitter.onNext(placeholder)
                         }
 
-                picasso.load(imageUrl)
-                        .transform(arrayListOf(CropCircleTransformation(), scaleTransformation))
-                        .noFade()
-                        .get()?.let { profileImage ->
-                            emitter.onNext(profileImage)
-                        }
-
+                // Get profile picture
+                imageApiExtension?.let { url ->
+                    try {
+                        picasso.load(BuildConfig.BASEURLAPI + url)
+                                .transform(arrayListOf(CropCircleTransformation(), scaleTransformation))
+                                .noFade()
+                                .get()?.let { profileImage ->
+                                    emitter.onNext(profileImage)
+                                }
+                    } catch (e: Exception) {
+                        Log.d("Picasso", "Failed to load profile picture ${BuildConfig.BASEURLAPI + url}: $e")
+                    }
+                }
                 emitter.onComplete()
             }
-        } catch (e: Throwable) {
+        } catch (e: Exception) {
             emitter.onError(e)
         }
     }

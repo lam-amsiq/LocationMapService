@@ -46,7 +46,7 @@ open class StartUpActivity : DemoActivity() {
 
                         // Add dummy annotations
                         ApiService.createService(IDummyApi::class.java)
-                                .getDummyAnnotations(55.0f, 56.0f, 12.0f, 13.0f)
+                                .getDummyAnnotations(55.0f, 57.0f, 12.0f, 13.0f)
                                 .compose(bindToLifecycle())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribeOn(Schedulers.io())

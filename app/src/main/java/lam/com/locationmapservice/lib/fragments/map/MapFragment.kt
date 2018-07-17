@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
@@ -28,6 +29,7 @@ import lam.com.locationmapservice.lib.fragments.LMSFragment
 import org.androidannotations.annotations.EFragment
 import lam.com.locationmapservice.lib.fragments.map.controllers.MapController
 import lam.com.locationmapservice.lib.models.Annotation
+import lam.com.locationmapservice.lib.utils.HeatmapMaths
 import java.util.*
 
 @EFragment(R.layout.fragment_map)
@@ -84,14 +86,28 @@ open class MapFragment : LMSFragment() {
 
     fun setAnnotations(annotationList: LinkedList<Annotation>) {
         MapController.getRealm()?.let { realm ->
+            // Remove old annotations from realm
             realm.beginTransaction()
             Log.d("realm", "Delete: isInTransaction = ${realm.isInTransaction}")
             realm.delete(Annotation::class.java)
             realm.commitTransaction()
 
+            // Compute heatmaps
+            val computedAnnotations = HeatmapMaths.computeHashmaps(annotationList, 0.02, true)
+
+            // Add heatmaps
+            val heatmapLocations = ArrayList<LatLng>()
+            computedAnnotations.first.forEach { heatmap ->
+                heatmapLocations.clear()
+                heatmap.forEach { annotation ->
+                    annotation.position?.toLatLng()?.let { latLng ->  heatmapLocations.add(latLng) }
+                }
+                MapController.addHeatmap(heatmapLocations)
+            }
+
             // Add annotations
             realm.beginTransaction()
-            annotationList.forEach { annotation ->
+            computedAnnotations.second.forEach { annotation ->
                 addAnnotation(annotation)?.let { marker ->
                     Log.d("map", "Annotation ${annotation.annotation_id} added=${marker.id}")
                     annotation.marker_id = marker.id

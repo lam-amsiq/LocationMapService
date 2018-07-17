@@ -230,7 +230,7 @@ object MapController {
         })
     }
 
-    fun addHeatmap(data: List<LatLng>): TileOverlay? {
+    fun addHeatmap(data: Collection<LatLng>): TileOverlay? {
         return googleMap?.addTileOverlay(TileOverlayOptions().tileProvider(HeatmapTileProvider.Builder()
                 .data(data)
                 .gradient(heatmapGradient)

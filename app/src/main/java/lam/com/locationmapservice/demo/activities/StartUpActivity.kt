@@ -32,7 +32,7 @@ open class StartUpActivity : DemoActivity() {
         super.onResume()
         // Setup map
         if (mapFragment?.isMapSetup != true) {
-            mapFragment?.setup(applicationContext)
+            mapFragment?.setup(this)
                     ?.observeOn(AndroidSchedulers.mainThread())
                     ?.subscribe({ _ ->
                         // Listen for click events on map annotations

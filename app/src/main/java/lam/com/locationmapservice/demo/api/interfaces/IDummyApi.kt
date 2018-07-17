@@ -9,5 +9,5 @@ import retrofit2.http.Query
 interface IDummyApi {
     @Headers("Content-Type: application/json")
     @GET("dummy/annotations")
-    fun getDummyAnnotations(@Query("latMin") latMin: Float? = -90f, @Query("latMax") latMax: Float? = 90f, @Query("lngMin") lngMin: Float? = -180f, @Query("lngMax") lngMax: Float? = 180f): Observable<ArrayList<Annotation?>>
+    fun getDummyAnnotations(@Query("latMin") latMin: Float? = -90f, @Query("latMax") latMax: Float? = 90f, @Query("lngMin") lngMin: Float? = -180f, @Query("lngMax") lngMax: Float? = 180f): Observable<ArrayList<Annotation>>
 }

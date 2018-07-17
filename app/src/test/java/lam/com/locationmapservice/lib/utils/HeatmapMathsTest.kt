@@ -74,7 +74,7 @@ class HeatmapMathsTest {
 
         val annotations = LinkedList(arrayListOf(a10, a9, a11, a12, a6, a5, a8, a7, a4, a1, a2, a3, a13))
 
-        val expected = hashMapOf(
+        var expected = hashMapOf(
                 a1 to arrayListOf(a2,a3),
                 a2 to arrayListOf(a3),
                 a3 to arrayListOf(),
@@ -89,7 +89,27 @@ class HeatmapMathsTest {
                 a12 to arrayListOf(),
                 a13 to arrayListOf())
 
-        val actual = HeatmapMaths.mapAnnotations(annotations, .05, true)
+        var actual = HeatmapMaths.mapAnnotations(annotations, .05, true)
+
+        assertEquals(expected, actual)
+
+        // Test group distance shorter than group size
+        expected = hashMapOf(
+                a1 to arrayListOf(a2,a3),
+                a2 to arrayListOf(a3),
+                a3 to arrayListOf(),
+                a4 to arrayListOf(a1,a2),
+                a5 to arrayListOf(a8,a7),
+                a6 to arrayListOf(a5,a8,a7),
+                a7 to arrayListOf(),
+                a8 to arrayListOf(a7),
+                a9 to arrayListOf(a11,a12),
+                a10 to arrayListOf(a9,a11),
+                a11 to arrayListOf(a12),
+                a12 to arrayListOf(),
+                a13 to arrayListOf())
+
+        actual = HeatmapMaths.mapAnnotations(annotations, .02, true)
 
         println("Mapped annotations:")
         actual.forEach { entry ->
@@ -135,6 +155,10 @@ class HeatmapMathsTest {
         println("remaining:")
         println(actual.second)
 
+        assertEquals(expected, actual)
+
+        // Check for group distance shorter than group size
+        actual = HeatmapMaths.computeHashmaps(annotations, .02, true)
         assertEquals(expected, actual)
 
         // Check if position is null

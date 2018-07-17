@@ -7,41 +7,38 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 object HeatmapMaths {
-    fun computeHashmaps(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): Pair<ArrayList<ArrayList<Annotation>>, ArrayList<Annotation>> {
-        val heatmaps = arrayListOf<ArrayList<Annotation>>()
-        val remaining: List<Annotation>
+    fun computeHashmaps(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): Pair<List<List<Annotation>>, List<Annotation>> {
         val annotationMap = HeatmapMaths.mapAnnotations(annotationList, groupDistance, isSortedByLatitudeAsc)
+        val heatmaps = arrayListOf<List<Annotation>>()
+        val remaining= arrayListOf<Annotation>()
 
-        var group: ArrayList<Annotation>
+        var heatmap: ArrayList<Annotation>
         annotationList.forEach { annotation ->
-            annotationMap[annotation]?.let { pairList ->
-                if (pairList.isNotEmpty()) {
-                    group = arrayListOf()
+            annotationMap[annotation]?.let { pairedAnnotations ->
+                heatmap = arrayListOf()
+                if (pairedAnnotations.isNotEmpty()) {
+                    traverseMap(annotation, heatmap, annotationMap)
+                }
 
-                    annotationMap.remove(annotation)
-                    pairList.forEach { pairedAnnotations ->
-                        annotationMap.remove(pairedAnnotations)
-                        traverseAnnotationMap(pairedAnnotations, annotationMap, group)
-                    }
-                    group.add(annotation)
-                    group.addAll(pairList)
-                    heatmaps.add(group)
+                if (heatmap.isNotEmpty()) {
+                    heatmaps.add(heatmap)
+                } else {
+                    remaining.add(annotation)
                 }
             }
         }
 
-        remaining = ArrayList(annotationMap.keys.toList())
         return Pair(heatmaps, remaining)
     }
 
-    private fun traverseAnnotationMap(annotation: Annotation, annotationMap: HashMap<Annotation, ArrayList<Annotation>>, group: ArrayList<Annotation>) {
-        annotationMap[annotation]?.let { pairList ->
+    private fun traverseMap(annotation: Annotation, heatmap: ArrayList<Annotation>, annotationMap: HashMap<Annotation, ArrayList<Annotation>>) {
+        annotationMap[annotation]?.let { pairedAnnotations ->
+            heatmap.add(annotation)
             annotationMap.remove(annotation)
-            if (pairList.isNotEmpty()) {
-                group.addAll(pairList)
 
-                pairList.forEach { pairedAnnotations ->
-                    traverseAnnotationMap(pairedAnnotations, annotationMap, group)
+            if (pairedAnnotations.isNotEmpty()) {
+                pairedAnnotations.forEach { pairedAnnotation ->
+                    traverseMap(pairedAnnotation, heatmap, annotationMap)
                 }
             }
         }

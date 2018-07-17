@@ -7,23 +7,23 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 object HeatmapMaths {
-    fun computeHashmaps(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): Pair<ArrayList<ArrayList<Long>>, ArrayList<Long>> {
-        val heatmaps = arrayListOf<ArrayList<Long>>()
-        val remaining: List<Long>
+    fun computeHashmaps(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): Pair<ArrayList<ArrayList<Annotation>>, ArrayList<Annotation>> {
+        val heatmaps = arrayListOf<ArrayList<Annotation>>()
+        val remaining: List<Annotation>
         val annotationMap = HeatmapMaths.mapAnnotations(annotationList, groupDistance, isSortedByLatitudeAsc)
 
-        var group: ArrayList<Long>
+        var group: ArrayList<Annotation>
         annotationList.forEach { annotation ->
-            annotationMap[annotation.annotation_id]?.let { pairList ->
+            annotationMap[annotation]?.let { pairList ->
                 if (pairList.isNotEmpty()) {
                     group = arrayListOf()
 
-                    annotationMap.remove(annotation.annotation_id)
-                    pairList.forEach { pairedId ->
-                        annotationMap.remove(pairedId)
-                        traverseAnnotationMap(pairedId, annotationMap, group)
+                    annotationMap.remove(annotation)
+                    pairList.forEach { pairedAnnotations ->
+                        annotationMap.remove(pairedAnnotations)
+                        traverseAnnotationMap(pairedAnnotations, annotationMap, group)
                     }
-                    group.add(annotation.annotation_id)
+                    group.add(annotation)
                     group.addAll(pairList)
                     heatmaps.add(group)
                 }
@@ -34,21 +34,21 @@ object HeatmapMaths {
         return Pair(heatmaps, remaining)
     }
 
-    private fun traverseAnnotationMap(annotationId: Long, annotationMap: HashMap<Long, ArrayList<Long>>, group: ArrayList<Long>) {
-        annotationMap[annotationId]?.let { pairList ->
-            annotationMap.remove(annotationId)
+    private fun traverseAnnotationMap(annotation: Annotation, annotationMap: HashMap<Annotation, ArrayList<Annotation>>, group: ArrayList<Annotation>) {
+        annotationMap[annotation]?.let { pairList ->
+            annotationMap.remove(annotation)
             if (pairList.isNotEmpty()) {
                 group.addAll(pairList)
 
-                pairList.forEach { pairedId ->
-                    traverseAnnotationMap(pairedId, annotationMap, group)
+                pairList.forEach { pairedAnnotations ->
+                    traverseAnnotationMap(pairedAnnotations, annotationMap, group)
                 }
             }
         }
     }
 
-    internal fun mapAnnotations(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): HashMap<Long, ArrayList<Long>> {
-        val matchMap = hashMapOf<Long, ArrayList<Long>>()
+    internal fun mapAnnotations(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): HashMap<Annotation, ArrayList<Annotation>> {
+        val matchMap = hashMapOf<Annotation, ArrayList<Annotation>>()
 
         if (!isSortedByLatitudeAsc) {
             //TODO: Sort list by latitude ascending
@@ -57,9 +57,9 @@ object HeatmapMaths {
         var annotationListIterator: MutableListIterator<Annotation>
         var next: Annotation
         annotationList.forEachIndexed { i, current ->
-            if (current.position?.lat == null || current.position?.lng == null) return@forEachIndexed
+            if (current?.position?.lat == null || current?.position?.lng == null) return@forEachIndexed
 
-            matchMap[current.annotation_id] = arrayListOf()
+            matchMap[current] = arrayListOf()
             annotationListIterator = annotationList.listIterator(i)
 
             if (annotationListIterator.hasNext()) {
@@ -69,7 +69,7 @@ object HeatmapMaths {
             }
 
             while (annotationListIterator.hasNext()) {
-                next = annotationListIterator.next()
+                next = annotationListIterator.next() ?: continue
 
                 if (next.position?.lat?.let { nextY ->
                             nextY - current.position?.lat!!
@@ -77,7 +77,7 @@ object HeatmapMaths {
 
                     HeatmapMaths.getDistance(current.position, next.position)?.let { distance ->
                         if (distance < groupDistance) {
-                            matchMap[current.annotation_id]?.add(next.annotation_id)
+                            matchMap[current]?.add(next)
                         }
                     }
                 } else {

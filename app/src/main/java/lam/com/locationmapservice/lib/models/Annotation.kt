@@ -41,9 +41,9 @@ open class Annotation(
         const val POSITION_LNG_JSON_TAG = "lng"
         const val MARKER_ID_JSON_TAG = "marker_id"
 
-        fun jsonStringToAnnotationList(jsonString: String): LinkedList<Annotation?> {
+        fun jsonStringToAnnotationList(jsonString: String): LinkedList<Annotation> {
             val jsonArray = JSONArray(jsonString)
-            val annotationList: LinkedList<Annotation?> = LinkedList()
+            val annotationList: LinkedList<Annotation> = LinkedList()
 
             var jsonAnnotation: JSONObject
             var jsonPosition: JSONObject

@@ -82,7 +82,7 @@ open class MapFragment : LMSFragment() {
         }
     }
 
-    fun setAnnotations(annotationArray: LinkedList<Annotation?>) {
+    fun setAnnotations(annotationList: LinkedList<Annotation>) {
         MapController.getRealm()?.let { realm ->
             realm.beginTransaction()
             Log.d("realm", "Delete: isInTransaction = ${realm.isInTransaction}")
@@ -91,15 +91,15 @@ open class MapFragment : LMSFragment() {
 
             // Add annotations
             realm.beginTransaction()
-            annotationArray.forEach { annotation ->
+            annotationList.forEach { annotation ->
                 addAnnotation(annotation)?.let { marker ->
-                    Log.d("map", "Annotation ${annotation?.annotation_id} added=${marker.id}")
-                    annotation?.marker_id = marker.id
-                    annotation?.store(realm)
+                    Log.d("map", "Annotation ${annotation.annotation_id} added=${marker.id}")
+                    annotation.marker_id = marker.id
+                    annotation.store(realm)
 
-                    setAnnotationImage(marker, annotation?.image)
+                    setAnnotationImage(marker, annotation.image)
                 } ?: kotlin.run {
-                    Log.d("map", "Annotation ${annotation?.annotation_id} added=FAILED")
+                    Log.d("map", "Annotation ${annotation.annotation_id} added=FAILED")
                 }
             }
             realm.commitTransaction()

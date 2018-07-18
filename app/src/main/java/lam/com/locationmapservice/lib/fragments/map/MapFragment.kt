@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
@@ -78,22 +79,24 @@ open class MapFragment : LMSFragment() {
         return MapController.getMarkerObserver()
     }
 
-    fun setAnnotations(jsonString: String?) {
+    fun setAnnotations(jsonString: String?, isSortedByLatitudeAsc: Boolean) {
         jsonString?.let { jsonStr ->
-            setAnnotations(Annotation.jsonStringToAnnotationList(jsonStr))
+            setAnnotations(Annotation.jsonStringToAnnotationList(jsonStr), isSortedByLatitudeAsc)
         }
     }
 
-    fun setAnnotations(annotationList: LinkedList<Annotation>) {
+    fun setAnnotations(annotationList: LinkedList<Annotation>, isSortedByLatitudeAsc: Boolean) {
         MapController.getRealm()?.let { realm ->
-            // Remove old annotations from realm
+            // Remove old annotations from realm and map
+            MapController.clearMap()
             realm.beginTransaction()
             Log.d("realm", "Delete: isInTransaction = ${realm.isInTransaction}")
             realm.delete(Annotation::class.java)
             realm.commitTransaction()
 
             // Compute heatmaps
-            val computedAnnotations = HeatmapMaths.computeHashmaps(annotationList, 0.02, true)
+            val groupDistance = MapController.getGroupDistance(annotationSize)
+            val computedAnnotations = HeatmapMaths.computeHashmaps(annotationList, groupDistance, isSortedByLatitudeAsc)
 
             // Add heatmaps
             val heatmapLocations = ArrayList<LatLng>()
@@ -134,7 +137,10 @@ open class MapFragment : LMSFragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { bitmap ->
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    try {
+                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        marker.isVisible = true
+                    } catch (e: IllegalArgumentException) { }
                 }
     }
 
@@ -192,6 +198,14 @@ open class MapFragment : LMSFragment() {
         } catch (e: Exception) {
             emitter.onError(e)
         }
+    }
+
+    fun getViewportBounds(): LatLngBounds? {
+        return MapController.getViewportBounds()
+    }
+
+    inline fun <Unit> setOnCameraListener(crossinline body: () -> Unit) {
+        MapController.setOnCameraListener { body() }
     }
 
     override fun onResume() {

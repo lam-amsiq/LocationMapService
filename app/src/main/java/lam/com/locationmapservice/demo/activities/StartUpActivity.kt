@@ -11,7 +11,9 @@ import lam.com.locationmapservice.demo.api.interfaces.IDummyApi
 import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
 import lam.com.locationmapservice.lib.fragments.map.MapFragment
 import lam.com.locationmapservice.lib.fragments.map.MapFragment_
+import lam.com.locationmapservice.lib.views.dialog.Dialog
 import org.androidannotations.annotations.EActivity
+import java.net.UnknownHostException
 import java.util.*
 
 @SuppressLint("Registered")
@@ -38,25 +40,37 @@ open class StartUpActivity : DemoActivity() {
                         // Listen for click events on map annotations
                         mapFragment?.getAnnotationObserver()
                                 ?.observeOn(Schedulers.io())
-                                ?.subscribe { annotationMarkerPair ->
+                                ?.subscribe ({ annotationMarkerPair ->
                                     val annotationFragment = AnnotationFragment_.builder().build()
                                     annotationFragment.setup(annotationMarkerPair.first, annotationMarkerPair.second)
 
                                     beginTransactionTo(annotationFragment)
-                                }
+                                }, {
+                                    Log.e("startup", "getAnnotationObserver error: $it")
+                                })
 
-                        // Add dummy annotations
-                        ApiService.createService(IDummyApi::class.java)
-                                .getDummyAnnotations(55.0f, 57.0f, 12.0f, 13.0f)
-                                .compose(bindToLifecycle())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribeOn(Schedulers.io())
-                                .subscribe { response ->
-                                    Log.d("retrofit", "Get annotation success: $response")
-                                    mapFragment?.setAnnotations(LinkedList(response))
-                                }
+                        mapFragment?.setOnCameraListener {
+                            // Get map viewport
+                            val mapViewportBounds = mapFragment?.getViewportBounds()
+
+                            // Add dummy annotations
+                            ApiService.createService(IDummyApi::class.java)
+                                    .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat())
+                                    .compose(bindToLifecycle())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribeOn(Schedulers.io())
+                                    .subscribe ({ response ->
+                                        Log.d("retrofit", "Get annotation success: $response")
+                                        mapFragment?.setAnnotations(LinkedList(response), true)
+                                    }, { error ->
+                                        Log.e("startup", "getDummyAnnotations error: $error")
+                                        if (error is UnknownHostException) {
+                                            Dialog.showDialogNoInternet(this)
+                                        }
+                                    })
+                        }
                     }, {
-                        Log.d("startup", "Map setup error: $it")
+                        Log.e("startup", "Map setup error: $it")
                     })
         }
     }

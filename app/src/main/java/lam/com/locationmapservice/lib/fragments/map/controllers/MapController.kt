@@ -150,8 +150,7 @@ object MapController {
                     }
                     true
                 })
-            }
-                    ?: kotlin.run { emitter.onError(NullPointerException("Map is null. Try calling setupMap() before calling getAnnotationObserver()")) }
+            } ?: kotlin.run { emitter.onError(NullPointerException("Map is null. Try calling setupMap() before calling getAnnotationObserver()")) }
         }
     }
 
@@ -188,13 +187,25 @@ object MapController {
         return googleMap?.isMyLocationEnabled
     }
 
-    private fun zoomCameraTo(location: Location?, zoom: Float?) {
-        location?.toLatLng()?.let { latLng ->
-            var cameraBuilder = CameraPosition.Builder().target(latLng)
-            zoom?.let { cameraBuilder = cameraBuilder.zoom(it) }
+    inline fun <Unit> setOnCameraListener(crossinline body: () -> Unit) {
+        getGoogleMap()?.setOnCameraIdleListener { body() }
+    }
 
-            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()))
-        }
+    fun getGoogleMap() = googleMap
+
+    fun getViewportBounds(): LatLngBounds? {
+        return googleMap?.projection?.visibleRegion?.latLngBounds
+    }
+
+    fun clearMap() {
+        googleMap?.clear()
+    }
+
+    fun getGroupDistance(annotationSize: Int): Double {
+        val viewportBounds = getViewportBounds()
+        val viewportWidth = (viewportBounds?.northeast?.longitude
+                ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
+        return viewportWidth / (annotationSize / 8.0)
     }
 
     fun addUserCircle(position: LatLng): Circle? {
@@ -218,6 +229,7 @@ object MapController {
     fun addAnnotation(position: Location): Marker? {
         return googleMap?.addMarker(position.toLatLng()?.let { latLng ->
             MarkerOptions()
+                    .visible(false)
                     .position(latLng)
         })
     }
@@ -236,6 +248,15 @@ object MapController {
                 .gradient(heatmapGradient)
                 .radius(50)
                 .build()))
+    }
+
+    private fun zoomCameraTo(location: Location?, zoom: Float?) {
+        location?.toLatLng()?.let { latLng ->
+            var cameraBuilder = CameraPosition.Builder().target(latLng)
+            zoom?.let { cameraBuilder = cameraBuilder.zoom(it) }
+
+            googleMap?.animateCamera(CameraUpdateFactory.newCameraPosition(cameraBuilder.build()))
+        }
     }
 
     private fun setAnnotationListener(map: GoogleMap, annotationListener: GoogleMap.OnMarkerClickListener) {

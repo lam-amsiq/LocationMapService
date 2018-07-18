@@ -200,14 +200,6 @@ object LocationController {
         }
     }
 
-    private fun showDialogNoInternet(context: Context?) {
-        context?.let { contextInner ->
-            Dialog.show(contextInner, null, contextInner.resources?.getString(R.string.location_dialog_no_internet_title), contextInner.resources?.getString(R.string.location_dialog_no_internet_content),
-                    DialogActionItemModel(contextInner.resources?.getString(R.string.location_dialog_no_internet_action), null)
-            )
-        }
-    }
-
     private fun showDialogEnabledFailed(context: Context?) {
         context?.let { contextInner ->
             Dialog.show(context, null, contextInner.resources?.getString(R.string.location_dialog_error_enable_title), contextInner.resources?.getString(R.string.location_dialog_error_enable_content),

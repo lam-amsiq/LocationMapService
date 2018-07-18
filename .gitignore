@@ -9,3 +9,4 @@
 /captures
 .externalNativeBuild
 .idea/
+app/src/test/java/lam/com/locationmapservice/SandboxTest.kt

@@ -43,8 +43,7 @@ open class MapFragment : LMSFragment() {
         override fun transform(source: Bitmap?): Bitmap {
             val isTall = source?.height ?: 1 > source?.width ?: 1
 
-            val aspectRatio = (if (isTall) source?.height?.div(source.width) else source?.width?.div(source.height))
-                    ?: 1
+            val aspectRatio = (if (isTall) source?.height?.div(source.width) else source?.width?.div(source.height)) ?: 1
             val targetHeight = if (isTall) annotationSize else annotationSize * aspectRatio
             val targetWidth = if (isTall) annotationSize * aspectRatio else annotationSize
 

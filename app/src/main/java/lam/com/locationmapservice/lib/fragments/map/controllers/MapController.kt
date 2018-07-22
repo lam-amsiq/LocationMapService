@@ -55,7 +55,6 @@ object MapController {
             val deleteRealm = Realm.deleteRealm(config)
             Log.d("realm", "Delete realm: $deleteRealm")
         }
-        mapView?.onDestroy()
     }
 
     fun onLowMemory() {
@@ -203,9 +202,9 @@ object MapController {
 
     fun getGroupDistance(annotationSize: Int): Double {
         val viewportBounds = getViewportBounds()
-        val viewportWidth = (viewportBounds?.northeast?.longitude
-                ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
-        return viewportWidth / (annotationSize / 8.0)
+        val viewportWidth = (viewportBounds?.northeast?.longitude ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
+        val viewportHeight = (viewportBounds?.northeast?.longitude ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
+        return (if(viewportWidth > viewportHeight) viewportWidth else viewportHeight) / (annotationSize / 8.0)
     }
 
     fun addUserCircle(position: LatLng): Circle? {

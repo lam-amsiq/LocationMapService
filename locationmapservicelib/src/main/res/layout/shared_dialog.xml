@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogFrame"
+    android:layout_width="@dimen/dialog_width"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginEnd="@dimen/padding_12"
+    android:layout_marginStart="@dimen/padding_12"
+    android:background="@drawable/shape_dialog_background"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/padding_24">
+
+    <ImageView
+        android:id="@+id/illustrationView"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/dialog_illustration_size"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/padding_24"
+        android:layout_marginEnd="@dimen/padding_24"
+        android:layout_marginStart="@dimen/padding_24"
+        android:scaleType="centerCrop"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/titleView"
+        style="@style/Title2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_8"
+        android:layout_marginEnd="@dimen/padding_24"
+        android:layout_marginStart="@dimen/padding_24"
+        android:textAlignment="center"
+        android:textColor="@color/darkest"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/subTextView"
+        style="@style/Body1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_12"
+        android:layout_marginEnd="@dimen/padding_24"
+        android:layout_marginStart="@dimen/padding_24"
+        android:textAlignment="center"
+        android:textColor="@color/ultra_dark" />
+
+    <View
+        android:id="@+id/listTopDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/shape_dialog_action_multiple_choices_divider"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/actionListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@color/custom_dialog_background"
+        android:dividerHeight="0dp"
+        android:listSelector="@android:color/transparent"
+        android:overScrollMode="never"
+        android:paddingBottom="0.25dp"
+        android:scrollbars="none" />
+
+    <View
+        android:id="@+id/listBottomDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/shape_dialog_action_multiple_choices_divider"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/actionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="@dimen/padding_24"
+        android:orientation="horizontal">
+
+        <lam.com.locationmapservice.lib.views.dialog.views.DialogActionItem_
+            android:id="@+id/cancelActionView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <lam.com.locationmapservice.lib.views.dialog.views.DialogActionItem_
+            android:id="@+id/okActionView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:background="@drawable/shape_dialog_action_single_choice_background" />
+    </LinearLayout>
+</LinearLayout>

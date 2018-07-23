@@ -1,2 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lam.locationmapservicelib" />
+    package="com.lam.locationmapservicelib">
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <!--Needed for Android 5.0 (API level 21) or higher-->
+    <uses-feature android:name="android.hardware.location.gps" />
+</manifest>

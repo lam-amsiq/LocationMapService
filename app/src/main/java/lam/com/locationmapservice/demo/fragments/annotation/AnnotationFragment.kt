@@ -34,7 +34,7 @@ open class AnnotationFragment : DemoFullscreenFragment() {
 
     @AfterViews
     internal fun after() {
-        nameView?.text = annotation?.title
+        nameView?.text = annotation?.name
         setMeta()
 
         (context as? DemoActivity)?.goToFullScreen(true)
@@ -114,7 +114,7 @@ open class AnnotationFragment : DemoFullscreenFragment() {
     }
 
     private fun setPortrait(default: Int) {
-        annotation?.image?.let { portraitUrl ->
+        annotation?.portrait?.let { portraitUrl ->
             Picasso.get()
                     .load(BuildConfig.BASEURLAPI + portraitUrl)
                     .error(R.drawable.as_shared_default_picture_offline_round)

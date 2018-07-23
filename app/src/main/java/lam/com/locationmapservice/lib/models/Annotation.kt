@@ -10,8 +10,9 @@ import java.util.*
 open class Annotation(
         @PrimaryKey
         var annotation_id: Long = 0,
-        var title: String? = null,
-        var image: String? = null,
+        var name: String? = null,
+        var portrait: String? = null,
+        var thumb: String? = null,
         var position: Location? = null,
         var marker_id: String? = null) : RealmObject() {
 
@@ -23,20 +24,22 @@ open class Annotation(
         val realmAnnotation = realm.createObject(Annotation::class.java, this.annotation_id)
         realmAnnotation.position = realmPosition
 
-        realmAnnotation.image = this.image
+        realmAnnotation.portrait = this.portrait
+        realmAnnotation.thumb = this.thumb
         realmAnnotation.marker_id = this.marker_id
-        realmAnnotation.title = this.title
+        realmAnnotation.name = this.name
     }
 
     override fun toString(): String {
-        return "Annotation($annotation_id: $title - marker_id=$marker_id, position=$position, image=$image)"
+        return "Annotation($annotation_id: $name - marker_id=$marker_id, position=$position, portrait=$portrait)"
 //        return "$annotation_id"
     }
 
     companion object {
         const val ANNOTATION_ID_JSON_TAG = "annotation_id"
-        const val TITLE_JSON_TAG = "title"
-        const val IMAGE_JSON_TAG = "image"
+        const val TITLE_JSON_TAG = "name"
+        const val PORTRAIT_JSON_TAG = "portrait"
+        const val THUMB_JSON_TAG = "thumb"
         const val POSITION_JSON_TAG = "position"
         const val POSITION_LAT_JSON_TAG = "lat"
         const val POSITION_LNG_JSON_TAG = "lng"
@@ -55,7 +58,8 @@ open class Annotation(
                 annotationList.addLast( Annotation(
                         jsonAnnotation.getLong(Annotation.ANNOTATION_ID_JSON_TAG),
                         jsonAnnotation.optString(Annotation.TITLE_JSON_TAG, null),
-                        jsonAnnotation.optString(Annotation.IMAGE_JSON_TAG, null),
+                        jsonAnnotation.optString(Annotation.PORTRAIT_JSON_TAG, null),
+                        jsonAnnotation.optString(Annotation.THUMB_JSON_TAG, null),
                         jsonPosition?.let { position ->
                             Location(position.getDouble(Annotation.POSITION_LAT_JSON_TAG),
                                     position.getDouble(Annotation.POSITION_LNG_JSON_TAG))

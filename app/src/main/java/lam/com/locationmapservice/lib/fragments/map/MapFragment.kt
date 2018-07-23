@@ -102,7 +102,7 @@ open class MapFragment : LMSFragment() {
             computedAnnotations.first.forEach { heatmap ->
                 heatmapLocations.clear()
                 heatmap.forEach { annotation ->
-                    annotation.position?.toLatLng()?.let { latLng ->  heatmapLocations.add(latLng) }
+                    annotation.position?.toLatLng()?.let { latLng -> heatmapLocations.add(latLng) }
                 }
                 MapController.addHeatmap(heatmapLocations)
             }
@@ -115,7 +115,7 @@ open class MapFragment : LMSFragment() {
                     annotation.marker_id = marker.id
                     annotation.store(realm)
 
-                    setAnnotationImage(marker, annotation.image)
+                    setAnnotationImage(marker, annotation.thumb)
                 } ?: kotlin.run {
                     Log.d("map", "Annotation ${annotation.annotation_id} added=FAILED")
                 }

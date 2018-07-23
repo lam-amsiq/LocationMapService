@@ -169,16 +169,8 @@ open class MapFragment : LMSFragment() {
     }
 
     private fun getAnnotationImage(picasso: Picasso, imageApiExtension: String?, size: Int): Observable<Bitmap> = Observable.create { emitter ->
-        try {
-            if (!emitter.isDisposed) {
-                // Get placeholder/default image
-                picasso.load(R.drawable.as_shared_default_picture_female_round)
-                        .resize(size, size)
-                        .noFade()
-                        .get()?.let { placeholder ->
-                            emitter.onNext(placeholder)
-                        }
-
+        if (!emitter.isDisposed) {
+            try {
                 // Get profile picture
                 imageApiExtension?.let { url ->
                     try {
@@ -191,11 +183,19 @@ open class MapFragment : LMSFragment() {
                     } catch (e: Exception) {
                         Log.d("Picasso", "Failed to load profile picture ${BuildConfig.BASEURLAPI + url}: $e")
                     }
+                } ?: kotlin.run {
+                    // Get placeholder/default portrait
+                    picasso.load(R.drawable.as_shared_default_picture_female_round)
+                            .resize(size, size)
+                            .noFade()
+                            .get()?.let { placeholder ->
+                                emitter.onNext(placeholder)
+                            }
                 }
                 emitter.onComplete()
+            } catch (e: Exception) {
+                emitter.onError(e)
             }
-        } catch (e: Exception) {
-            emitter.onError(e)
         }
     }
 

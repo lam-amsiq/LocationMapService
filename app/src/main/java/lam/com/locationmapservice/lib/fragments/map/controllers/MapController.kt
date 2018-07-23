@@ -118,17 +118,23 @@ object MapController {
 
                         setupLocationService(contextInner)
 
-                        mMap?.let { map ->
-                            emitter.onSuccess(map)
-                        } ?: kotlin.run {
-                            emitter.onError(Throwable(NullPointerException("Failed initializing map")))
+                        if (!emitter.isDisposed) {
+                            mMap?.let { map ->
+                                emitter.onSuccess(map)
+                            } ?: kotlin.run {
+                                emitter.onError(Throwable(NullPointerException("Failed initializing map")))
+                            }
                         }
                     }
                 } ?: kotlin.run {
-                    emitter.onError(Throwable(NullPointerException("Context is null. Try calling setupMap from onResume()")))
+                    if (!emitter.isDisposed) {
+                        emitter.onError(Throwable(NullPointerException("Context is null. Try calling setupMap from onResume()")))
+                    }
                 }
             } catch (e: Exception) {
-                emitter.onError(e)
+                if (!emitter.isDisposed) {
+                    emitter.onError(e)
+                }
             }
         }
     }
@@ -144,12 +150,18 @@ object MapController {
                                     val annotation = realm.copyFromRealm(it)
                                     realm.close()
 
-                                    emitter.onNext(Pair<Annotation, Marker>(annotation, marker))
+                                    if (!emitter.isDisposed) {
+                                        emitter.onNext(Pair<Annotation, Marker>(annotation, marker))
+                                    }
                                 }
                     }
                     true
                 })
-            } ?: kotlin.run { emitter.onError(NullPointerException("Map is null. Try calling setupMap() before calling getAnnotationObserver()")) }
+            } ?: kotlin.run {
+                if (!emitter.isDisposed) {
+                    emitter.onError(NullPointerException("Map is null. Try calling setupMap() before calling getAnnotationObserver()"))
+                }
+            }
         }
     }
 

@@ -48,7 +48,9 @@ object LocationController {
             val data = Bundle()
             data.putParcelable(LocationUpdate.LOCATION_BUNDLE_KEY, location)
 
-            emitter?.onNext(LocationUpdate(LocationUpdateType.Location, data))
+            if (emitter?.isDisposed != true) {
+                emitter?.onNext(LocationUpdate(LocationUpdateType.Location, data))
+            }
         }
 
         override fun onStatusChanged(provider: String?, status: Int, extra: Bundle?) {
@@ -57,7 +59,9 @@ object LocationController {
             data.putInt(LocationUpdate.STATUS_BUNDLE_KEY, status)
             data.putBundle(LocationUpdate.EXTRA_BUNDLE_KEY, extra)
 
-            emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
+            if (emitter?.isDisposed != true) {
+                emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
+            }
         }
 
         override fun onProviderEnabled(provider: String?) {
@@ -65,7 +69,9 @@ object LocationController {
             data.putString(LocationUpdate.PROVIDER_BUNDLE_KEY, provider)
             data.putBoolean(LocationUpdate.PROVIDER_ENABLE_BUNDLE_KEY, true)
 
-            emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
+            if (emitter?.isDisposed != true) {
+                emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
+            }
         }
 
         override fun onProviderDisabled(provider: String?) {
@@ -73,7 +79,9 @@ object LocationController {
             data.putString(LocationUpdate.PROVIDER_BUNDLE_KEY, provider)
             data.putBoolean(LocationUpdate.PROVIDER_ENABLE_BUNDLE_KEY, true)
 
-            emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
+            if (emitter?.isDisposed != true) {
+                emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
+            }
 
 //            ApplicationController.getInstance().currentActivity?.let { activity ->
 //                val manager = activity.packageManager
@@ -90,7 +98,9 @@ object LocationController {
     fun askUserToTurnOnLocationServices(context: Context?) {
         Dialog.show(context, null, context?.getString(R.string.location_dialog_location_is_off_title), context?.getString(R.string.location_dialog_location_is_off_content),
                 DialogActionItemModel(context?.getString(R.string.shared_action_cancel), Runnable {
-                    emitter?.onComplete()
+                    if (emitter?.isDisposed != true) {
+                        emitter?.onComplete()
+                    }
                 }),
                 DialogActionItemModel(context?.getString(R.string.shared_action_ok), Runnable {
                     (context as? Activity)?.let { activity ->
@@ -116,7 +126,9 @@ object LocationController {
         if (hasDeviceLocationPermission(context)) {
             getLocationManager(context)?.requestSingleUpdate(PROVIDER, locationListener, looper)
         } else {
-            emitter?.onError(MissingDevicePermissionException("Missing location permissions"))
+            if (emitter?.isDisposed != true) {
+                emitter?.onError(MissingDevicePermissionException("Missing location permissions"))
+            }
         }
         return observer
     }
@@ -128,7 +140,9 @@ object LocationController {
         if (hasDeviceLocationPermission(context)) {
             getLocationManager(context)?.requestLocationUpdates(PROVIDER, minTime, minDistance, locationListener)
         } else {
-            emitter?.onError(MissingDevicePermissionException("Missing location permissions"))
+            if (emitter?.isDisposed != true) {
+                emitter?.onError(MissingDevicePermissionException("Missing location permissions"))
+            }
         }
 
         return observer

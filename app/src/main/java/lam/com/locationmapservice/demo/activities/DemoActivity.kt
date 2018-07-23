@@ -1,6 +1,8 @@
 package lam.com.locationmapservice.demo.activities
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Build
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -62,5 +64,11 @@ abstract class DemoActivity : RxAppCompatActivity() {
             supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         } catch (ignore: IllegalStateException) {
         }
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val activeNetworkInfo = connectivityManager?.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 }

@@ -182,6 +182,12 @@ open class MapFragment : LMSFragment() {
                                 }
                     } catch (e: Exception) {
                         Log.d("Picasso", "Failed to load profile picture ${BuildConfig.BASEURLAPI + url}: $e")
+                        picasso.load(R.drawable.as_shared_default_picture_offline_round)
+                                .resize(size, size)
+                                .noFade()
+                                .get()?.let { placeholder ->
+                                    emitter.onNext(placeholder)
+                                }
                     }
                 } ?: kotlin.run {
                     // Get placeholder/default portrait

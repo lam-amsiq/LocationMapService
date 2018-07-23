@@ -33,4 +33,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <TextView
+        style="@style/Small1"
+        android:id="@+id/noInternetNotification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAlignment="center"
+        android:background="@color/custom_bottom_dialog_background"
+        android:text="@string/shared_notification_error_no_internet"
+        android:padding="2dp"
+        android:visibility="gone"/>
+
 </android.support.constraint.ConstraintLayout>

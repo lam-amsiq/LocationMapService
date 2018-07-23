@@ -9,6 +9,7 @@
     <string name="shared_dialog_close_app_title">You are about to close the app</string>
     <string name="shared_dialog_close_app_action_accept">Close</string>
     <string name="shared_notification_error_server">Sorry, a server error occurred. Please try again later.</string>
+    <string name="shared_notification_error_no_internet">No internet connection</string>
 
     <!-- Location -->
     <string name="location_dialog_location_is_off_title">Device location disabled</string>

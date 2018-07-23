@@ -57,6 +57,8 @@
     <color name="custom_dialog_multiple_choice_unpressed_text">@color/darker</color>
     <color name="custom_dialog_multiple_choice_divider">@color/brightbrighter</color>
 
+    <color name="custom_bottom_dialog_background">@color/page_background</color>
+
     // Map
     <color name="custom_map_heat_marker_center">#a14</color>
     <color name="custom_map_heat_marker_middle">#fb0</color>

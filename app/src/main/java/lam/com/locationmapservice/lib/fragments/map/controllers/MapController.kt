@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Looper
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import com.google.android.gms.maps.*
@@ -12,13 +13,18 @@ import com.google.maps.android.heatmaps.Gradient
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.exceptions.RealmMigrationNeededException
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.lib.controllers.location.LocationController
+import lam.com.locationmapservice.lib.enums.LocationUpdateType
 import lam.com.locationmapservice.lib.models.Location
 import lam.com.locationmapservice.lib.models.Annotation
+import lam.com.locationmapservice.lib.models.LocationUpdate
 
 object MapController {
     private var mapView: MapView? = null
@@ -88,15 +94,15 @@ object MapController {
         return null
     }
 
-    fun onRequestPermissionsResult(requestCode: Int) {
+    fun onRequestPermissionsResult(context: Context?, requestCode: Int) {
         if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE || requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL) {
-            enableMyLocation(true)
+            enableMyLocation(context, true)
         }
     }
 
-    fun onActivityResult(requestCode: Int) {
+    fun onActivityResult(context: Context?, requestCode: Int) {
         if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL || requestCode == LocationController.LOCATION_ENABLE_REQUEST_CODE) {
-            enableMyLocation(true)
+            enableMyLocation(context, true)
         }
     }
 
@@ -174,23 +180,37 @@ object MapController {
             if (!LocationController.isProviderEnabled(contextInner)) {
                 LocationController.askUserToTurnOnLocationServices(contextInner)
             } else {
-                enableMyLocation(true)
+                enableMyLocation(context, true)
             }
         }
     }
 
+    var locationObservable: Disposable? = null
+
     @SuppressLint("MissingPermission") // Checked in LocationController
-    private fun enableMyLocation(zoomToMyLocation: Boolean = false): Boolean? {
+    private fun enableMyLocation(context: Context?, zoomToMyLocation: Boolean = false): Boolean? {
         mapView?.context?.let { contextInner ->
             if (LocationController.hasFullPermissionAndIsProviderEnable(contextInner) && googleMap?.isMyLocationEnabled != true) {
-                googleMap?.isMyLocationEnabled = true
 
                 if (zoomToMyLocation) {
                     LocationController.getCachedLocation(contextInner)?.let { location ->
+                        googleMap?.isMyLocationEnabled = true
                         zoomCameraTo(Location(location.latitude, location.longitude), 12f)
                     } ?: kotlin.run {
                         googleMap?.isMyLocationEnabled = false
-                        LocationController.askUserToTurnOnLocationServices(contextInner)
+                        locationObservable = LocationController.getLocationASync(context, Looper.getMainLooper())
+                                ?.observeOn(AndroidSchedulers.mainThread())
+                                ?.subscribeOn(Schedulers.io())
+                                ?.subscribe({ locationUpdate ->
+                                    if (locationUpdate.type == LocationUpdateType.Location) {
+                                        val location = locationUpdate.data.getParcelable<android.location.Location>(LocationUpdate.LOCATION_BUNDLE_KEY)
+                                        googleMap?.isMyLocationEnabled = true
+                                        zoomCameraTo(Location(location.latitude, location.longitude), 12f)
+                                        locationObservable?.dispose()
+                                    }
+                                }, { error ->
+                                    Log.d("Location", "Failed to get location async: $error")
+                                })
                     }
                 }
             }

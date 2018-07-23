@@ -229,11 +229,11 @@ open class MapFragment : LMSFragment() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        MapController.onRequestPermissionsResult(requestCode)
+        MapController.onRequestPermissionsResult(context, requestCode)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        MapController.onActivityResult(requestCode)
+        MapController.onActivityResult(context, requestCode)
     }
 }

@@ -2,17 +2,30 @@ package lam.com.locationmapservice.demo.fragments.annotation
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.location.Address
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.util.Log
 import android.util.Property
 import android.view.View
 import com.google.android.gms.maps.model.Marker
+import com.squareup.picasso.Picasso
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.fragment_annotation.*
+import lam.com.locationmapservice.BuildConfig
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.demo.activities.DemoActivity
+import lam.com.locationmapservice.demo.api.ApiService
+import lam.com.locationmapservice.demo.api.interfaces.IDummyApi
 import lam.com.locationmapservice.demo.fragments.DemoFullscreenFragment
 import lam.com.locationmapservice.lib.models.Annotation
+import lam.com.locationmapservice.lib.utils.extensions.fitCenter
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.EFragment
+import android.location.Geocoder
+import java.util.*
+
 
 @EFragment(R.layout.fragment_annotation)
 open class AnnotationFragment : DemoFullscreenFragment() {
@@ -21,8 +34,8 @@ open class AnnotationFragment : DemoFullscreenFragment() {
 
     @AfterViews
     internal fun after() {
-        idTV?.text = "${annotation?.title} (${annotation?.annotation_id})\n" +
-                "Annotationid=${annotation?.marker_id}" ?: "ANNOTATION NP"
+        nameView?.text = annotation?.title
+        setMeta()
 
         (context as? DemoActivity)?.goToFullScreen(true)
         annotationFrame?.post {
@@ -57,6 +70,63 @@ open class AnnotationFragment : DemoFullscreenFragment() {
             override fun onAnimationRepeat(animation: Animator) {}
         })
         return frameAnimation
+    }
+
+    private fun setMeta() {
+        annotation?.annotation_id?.let { annotationId ->
+            ApiService.createService(IDummyApi::class.java)
+                    .getDummyAnnotationMeta(annotationId)
+                    .compose(bindToLifecycle())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe({ response ->
+                        Log.d("annotation", "Get annotation meta success: $response")
+                        if (response.isSuccessful) {
+                            response.body()?.let { meta ->
+                                summaryView.text = "${meta.age}${getCityName()?.let { address -> " \u2022 ${address.locality}" }}"
+                                meta.defaultPortrait()?.let { defaultPortrait ->
+                                    setPortrait(defaultPortrait)
+                                }
+                            }
+                        } else {
+                            Picasso.get()
+                                    .load(R.drawable.as_shared_default_picture_offline_round)
+                                    .fitCenter()
+                                    .into(portraitView)
+                        }
+                    }, { error ->
+                        Log.e("annotation", "getDummyMeta error: $error")
+                        Picasso.get()
+                                .load(R.drawable.as_shared_default_picture_offline_round)
+                                .fitCenter()
+                                .into(portraitView)
+                    })
+        }
+    }
+
+    private fun getCityName(): Address? {
+        val addresses = annotation?.position?.lat?.let { lat ->
+            annotation?.position?.lng?.let { lng ->
+                Geocoder(context, Locale.getDefault()).getFromLocation(lat, lng, 1)
+            }
+        }
+        return addresses?.firstOrNull()
+    }
+
+    private fun setPortrait(default: Int) {
+        annotation?.image?.let { portraitUrl ->
+            Picasso.get()
+                    .load(BuildConfig.BASEURLAPI + portraitUrl)
+                    .error(R.drawable.as_shared_default_picture_offline_round)
+                    .fitCenter()
+                    .transform(CropCircleTransformation())
+                    .into(portraitView)
+        } ?: kotlin.run {
+            Picasso.get()
+                    .load(default)
+                    .fitCenter()
+                    .into(portraitView)
+        }
     }
 
     companion object {

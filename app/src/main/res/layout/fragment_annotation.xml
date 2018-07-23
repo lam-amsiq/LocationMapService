@@ -1,16 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/annotationFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/page_background"
-    android:visibility="invisible">
+    android:visibility="visible">
 
-    <TextView
-        android:id="@+id/idTV"
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/portraitWrapper"
+        android:layout_width="@dimen/annotation_portrait_size"
+        android:layout_height="@dimen/annotation_portrait_size"
+        android:layout_marginTop="@dimen/padding_60"
+        android:background="@drawable/shape_annotation_portrait"
+        android:padding="@dimen/annotation_portrait_stroke_width"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/portraitView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:textAlignment="center"/>
+        android:layout_marginEnd="@dimen/padding_72"
+        android:layout_marginStart="@dimen/padding_72"
+        android:layout_marginTop="@dimen/padding_12"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/portraitWrapper">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/nameView"
+            style="@style/Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/summaryView"
+            style="@style/Body1"
+            android:textColor="@color/text_light"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

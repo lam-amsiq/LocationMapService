@@ -44,4 +44,8 @@
 
     <!-- Map -->
     <dimen name="map_user_marker_size">100dp</dimen>
+
+    <!-- Annotation page -->
+    <dimen name="annotation_portrait_size">160dp</dimen>
+    <dimen name="annotation_portrait_stroke_width">2dp</dimen>
 </resources>

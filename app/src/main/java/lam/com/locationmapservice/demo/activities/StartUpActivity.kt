@@ -3,11 +3,13 @@ package lam.com.locationmapservice.demo.activities
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import lam.com.locationmapservice.R
 import lam.com.locationmapservice.demo.api.ApiService
 import lam.com.locationmapservice.demo.api.interfaces.IDummyApi
+import lam.com.locationmapservice.demo.dummyData.UserDummy
 import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
 import lam.com.locationmapservice.lib.fragments.map.MapFragment
 import lam.com.locationmapservice.lib.fragments.map.MapFragment_
@@ -40,7 +42,7 @@ open class StartUpActivity : DemoActivity() {
                         // Listen for click events on map annotations
                         mapFragment?.getAnnotationObserver()
                                 ?.observeOn(Schedulers.io())
-                                ?.subscribe ({ annotationMarkerPair ->
+                                ?.subscribe({ annotationMarkerPair ->
                                     val annotationFragment = AnnotationFragment_.builder().build()
                                     annotationFragment.setup(annotationMarkerPair.first, annotationMarkerPair.second)
 
@@ -55,13 +57,17 @@ open class StartUpActivity : DemoActivity() {
 
                             // Add dummy annotations
                             ApiService.createService(IDummyApi::class.java)
-                                    .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat())
+                                    .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.isMale)
                                     .compose(bindToLifecycle())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribeOn(Schedulers.io())
-                                    .subscribe ({ response ->
+                                    .subscribe({ response ->
                                         Log.d("retrofit", "Get annotation success: $response")
-                                        mapFragment?.setAnnotations(LinkedList(response), true)
+                                        if (response.isSuccessful) {
+                                            mapFragment?.setAnnotations(LinkedList(response.body()), true)
+                                        } else {
+                                            Toast.makeText(this, resources?.getString(R.string.shared_notification_error_server), Toast.LENGTH_LONG).show()
+                                        }
                                     }, { error ->
                                         Log.e("startup", "getDummyAnnotations error: $error")
                                         if (error is UnknownHostException) {

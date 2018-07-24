@@ -10,8 +10,8 @@ android {
         renderscriptTargetApi 27 // must match target sdk and build tools
         targetSdkVersion 27
         minSdkVersion 18
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
         renderscriptSupportModeEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -106,8 +106,4 @@ dependencies {
 
     // Material Dialogs
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // https://github.com/afollestad/material-dialogs/releases
-}
-
-realm {
-    syncEnabled = true
 }

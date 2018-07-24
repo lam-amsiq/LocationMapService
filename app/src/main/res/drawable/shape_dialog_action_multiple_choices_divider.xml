@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <size android:height="@dimen/dialog_multiple_choice_divider" />
-    <solid android:color="@color/custom_dialog_multiple_choice_divider" />
-</shape>

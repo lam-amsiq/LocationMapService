@@ -2,7 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'realm-android'
 
 android {
     buildToolsVersion "27.0.3"
@@ -119,10 +118,8 @@ dependencies {
     implementation 'com.eightbitlab:blurview:1.4.0'  // https://github.com/Dimezis/BlurView/releases
     implementation 'com.eightbitlab:supportrenderscriptblur:1.0.1'
 
-//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-}
+    implementation project(':locationmapservicelib')
 
-realm {
-    syncEnabled = true
+    //    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

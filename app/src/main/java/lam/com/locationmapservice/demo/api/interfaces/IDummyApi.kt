@@ -2,7 +2,7 @@ package lam.com.locationmapservice.demo.api.interfaces
 
 import io.reactivex.Observable
 import lam.com.locationmapservice.demo.models.AnnotationMeta
-import lam.com.locationmapservice.lib.models.Annotation
+import com.lam.locationmapservicelib.models.Annotation
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers

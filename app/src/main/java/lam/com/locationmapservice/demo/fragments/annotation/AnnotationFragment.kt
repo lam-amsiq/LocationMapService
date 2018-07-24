@@ -19,13 +19,12 @@ import lam.com.locationmapservice.demo.activities.DemoActivity
 import lam.com.locationmapservice.demo.api.ApiService
 import lam.com.locationmapservice.demo.api.interfaces.IDummyApi
 import lam.com.locationmapservice.demo.fragments.DemoFullscreenFragment
-import lam.com.locationmapservice.lib.models.Annotation
-import lam.com.locationmapservice.lib.utils.extensions.fitCenter
+import com.lam.locationmapservicelib.models.Annotation
+import com.lam.locationmapservicelib.utils.extensions.fitCenter
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.EFragment
 import android.location.Geocoder
 import java.util.*
-
 
 @EFragment(R.layout.fragment_annotation)
 open class AnnotationFragment : DemoFullscreenFragment() {

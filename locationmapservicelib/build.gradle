@@ -107,7 +107,3 @@ dependencies {
     // Material Dialogs
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // https://github.com/afollestad/material-dialogs/releases
 }
-
-realm {
-    syncEnabled = true
-}

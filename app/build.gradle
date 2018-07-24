@@ -11,7 +11,7 @@ android {
         targetSdkVersion 27
         minSdkVersion 18
         versionCode 1
-        versionName "0.1"
+        versionName "1.0"
         applicationId "lam.com.locationmapservice"
         renderscriptSupportModeEnabled true
         vectorDrawables.useSupportLibrary = true

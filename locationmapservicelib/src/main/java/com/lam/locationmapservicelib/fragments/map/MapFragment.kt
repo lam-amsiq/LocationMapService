@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +28,7 @@ import com.lam.locationmapservicelib.fragments.LMSFragment
 import com.lam.locationmapservicelib.fragments.map.controllers.MapController
 import com.lam.locationmapservicelib.models.Annotation
 import com.lam.locationmapservicelib.utils.HeatmapMaths
+import com.lam.locationmapservicelib.utils.LMSLog
 import java.util.*
 
 open class MapFragment : LMSFragment() {
@@ -86,7 +86,6 @@ open class MapFragment : LMSFragment() {
             // Remove old annotations from realm and map
             MapController.clearMap()
             realm.beginTransaction()
-            Log.d("realm", "Delete: isInTransaction = ${realm.isInTransaction}")
             realm.delete(Annotation::class.java)
             realm.commitTransaction()
 
@@ -108,13 +107,12 @@ open class MapFragment : LMSFragment() {
             realm.beginTransaction()
             computedAnnotations.second.forEach { annotation ->
                 addAnnotation(annotation)?.let { marker ->
-                    Log.d("map", "Annotation ${annotation.annotation_id} added=${marker.id}")
                     annotation.marker_id = marker.id
                     annotation.store(realm)
 
                     setAnnotationImage(marker, baseApiUrl, annotation.thumb, defaultImage, errorImage)
                 } ?: kotlin.run {
-                    Log.d("map", "Annotation ${annotation.annotation_id} added=FAILED")
+                    LMSLog.w(message="Failed to add annotation ${annotation.annotation_id}")
                 }
             }
             realm.commitTransaction()
@@ -178,7 +176,7 @@ open class MapFragment : LMSFragment() {
                                     emitter.onNext(profileImage)
                                 }
                     } catch (e: Exception) {
-                        Log.d("Picasso", "Failed to load profile picture ${baseApiUrl + url}: $e")
+                        LMSLog.d(message="Picasso failed to load annotation image ${baseApiUrl + url}: $e")
                         picasso.load(errorImage)
                                 .resize(annotationSize, annotationSize)
                                 .noFade()

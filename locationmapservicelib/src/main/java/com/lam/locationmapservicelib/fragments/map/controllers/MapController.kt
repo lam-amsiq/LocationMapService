@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.heatmaps.Gradient
@@ -25,6 +24,7 @@ import com.lam.locationmapservicelib.enums.LocationUpdateType
 import com.lam.locationmapservicelib.models.Location
 import com.lam.locationmapservicelib.models.Annotation
 import com.lam.locationmapservicelib.models.LocationUpdate
+import com.lam.locationmapservicelib.utils.LMSLog
 
 object MapController {
     private var mapView: MapView? = null
@@ -58,8 +58,7 @@ object MapController {
 
     fun onDestroy() {
         MapController.realmConfig?.let { config ->
-            val deleteRealm = Realm.deleteRealm(config)
-            Log.d("realm", "Delete realm: $deleteRealm")
+            Realm.deleteRealm(config)
         }
     }
 
@@ -209,7 +208,7 @@ object MapController {
                                         locationObservable?.dispose()
                                     }
                                 }, { error ->
-                                    Log.d("Location", "Failed to get location async: $error")
+                                    LMSLog.w(message="Failed to get location async: $error")
                                 })
                     }
                 }

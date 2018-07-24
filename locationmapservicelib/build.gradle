@@ -10,8 +10,8 @@ android {
         renderscriptTargetApi 27 // must match target sdk and build tools
         targetSdkVersion 27
         minSdkVersion 18
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
         renderscriptSupportModeEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

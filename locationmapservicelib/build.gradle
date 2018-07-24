@@ -27,7 +27,6 @@ android {
 
     buildTypes {
         release {
-            buildConfigField "boolean", "LOG", "false"
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -96,7 +95,6 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:' + Glide
-//    implementation 'com.github.bumptech.glide:okhttp3-integration:' + Glide
 
     // Android support libraries
     implementation 'com.android.support:customtabs:' + SupportVersion,
@@ -108,9 +106,6 @@ dependencies {
 
     // Material Dialogs
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0' // https://github.com/afollestad/material-dialogs/releases
-
-//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 realm {

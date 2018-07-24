@@ -48,7 +48,6 @@ open class StartUpActivity : DemoActivity() {
         beginTransactionTo(mapFragment)
     }
 
-
     override fun onResume() {
         super.onResume()
         // Setup map
@@ -70,7 +69,7 @@ open class StartUpActivity : DemoActivity() {
 
                         mapFragment?.setOnCameraListener {
                             // Add dummy annotations
-                            setAnnotations(mapFragment?.getViewportBounds())
+                            fetchAndSetAnnotations(mapFragment?.getViewportBounds())
                         }
                     }, {
                         Log.e("startup", "Map setup error: $it")
@@ -78,7 +77,17 @@ open class StartUpActivity : DemoActivity() {
         }
     }
 
-    private fun setAnnotations(mapViewportBounds: LatLngBounds?): Disposable? {
+    @Receiver(actions = [(ConnectivityManager.CONNECTIVITY_ACTION)], registerAt = Receiver.RegisterAt.OnResumeOnPause)
+    internal fun networkChanges() {
+        val hasInternet = isNetworkAvailable()
+        noInternetNotification?.height?.toFloat()?.let { from -> getNoInternetAnimation(noInternetNotification, from, 0f, hasInternet)?.start() }
+        if (hasInternet) {
+            noInternetShown = false
+            fetchAndSetAnnotations(mapFragment?.getViewportBounds())
+        }
+    }
+
+    private fun fetchAndSetAnnotations(mapViewportBounds: LatLngBounds?): Disposable? {
         return ApiService.createService(IDummyApi::class.java)
                 .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.isMale)
                 .compose(bindToLifecycle())
@@ -110,18 +119,8 @@ open class StartUpActivity : DemoActivity() {
         return mapFragment?.setAnnotations(list,
                 true,
                 BuildConfig.BASEURLAPI,
-                if (UserDummy.isMale) R.drawable.as_shared_default_picture_female_round else R.drawable.as_shared_default_picture_male_round,
+                if (UserDummy.isMale) R.drawable.as_shared_default_picture_male_round else R.drawable.as_shared_default_picture_female_round,
                 R.drawable.as_shared_default_picture_offline_round)
-    }
-
-    @Receiver(actions = [(ConnectivityManager.CONNECTIVITY_ACTION)], registerAt = Receiver.RegisterAt.OnResumeOnPause)
-    internal fun networkChanges() {
-        val hasInternet = isNetworkAvailable()
-        noInternetNotification?.height?.toFloat()?.let { from -> getNoInternetAnimation(noInternetNotification, from, 0f, hasInternet)?.start() }
-        if (hasInternet) {
-            noInternetShown = false
-            setAnnotations(mapFragment?.getViewportBounds())
-        }
     }
 
     private fun getNoInternetAnimation(view: View, from: Float, to: Float, out: Boolean = false): ObjectAnimator? {

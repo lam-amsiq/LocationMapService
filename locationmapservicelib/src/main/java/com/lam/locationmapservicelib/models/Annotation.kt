@@ -32,7 +32,6 @@ open class Annotation(
 
     override fun toString(): String {
         return "Annotation($annotation_id: $name - marker_id=$marker_id, position=$position, portrait=$portrait)"
-//        return "$annotation_id"
     }
 
     companion object {

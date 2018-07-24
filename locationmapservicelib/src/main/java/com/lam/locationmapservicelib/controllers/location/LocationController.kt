@@ -25,7 +25,6 @@ import com.lam.locationmapservicelib.views.dialog.Dialog
 import com.lam.locationmapservicelib.views.dialog.DialogActionItemModel
 
 object LocationController {
-    const val TAG = "LocationController"
     const val LOCATION_ENABLE_REQUEST_CODE = 4000
     const val LOCATION_PERMISSION_REQUEST_CODE = 4001
     const val LOCATION_PERMISSION_REQUEST_CODE_RATIONAL = 4002

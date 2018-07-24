@@ -18,13 +18,16 @@ android {
         buildConfigField "String", "BASEURLAPI", "\"http://nasie.diskstation.me:7070/locationmapwebservice/api/\""
         buildConfigField "String", "BASEURLWEB", "\"http://nasie.diskstation.me:7070/locationmapwebservice\""
     }
+
     dataBinding {
         enabled = true
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -105,7 +108,4 @@ dependencies {
 
     implementation project(':locationmapservicelib')
 //    implementation 'com.github.lam-amsiq:LocationMapService:1.0'
-
-    //    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

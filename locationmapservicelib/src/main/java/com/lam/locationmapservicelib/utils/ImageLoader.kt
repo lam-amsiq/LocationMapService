@@ -9,8 +9,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 object ImageLoader {
-    private val TAG = "Image Loader"
-
     fun getDrawable(context: Context?, resID: Int?): Drawable? {
         return if (context == null || resID == null) return null else AppCompatResources.getDrawable(context, resID)
     }

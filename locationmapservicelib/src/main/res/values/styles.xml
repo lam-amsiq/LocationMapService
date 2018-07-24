@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TEXT STYLES -->
+    <style name="Micro1" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_micro1_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Micro2" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_micro2_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Small1" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_small1_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Small2" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_small2_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Body1" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_body1_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Body2" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_body2_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Title1" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_title1_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Title2" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_title2_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Headline1" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_headline1_text_size</item>
+        <item name="android:textColor">@color/text_normal</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Headline2" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_headline2_text_size</item>
+        <item name="android:textColor">@color/darkest</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Display1" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_display1_text_size</item>
+        <item name="android:textColor">@color/darkest</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="Display2" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_display2_text_size</item>
+        <item name="android:textColor">@color/darkest</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="DisplayXL1" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_displayXL1_text_size</item>
+        <item name="android:textColor">@color/darkest</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+
+    <style name="DisplayXL2" parent="@android:style/Widget.TextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">@dimen/default_displayXL2_text_size</item>
+        <item name="android:textColor">@color/darkest</item>
+        <item name="android:textAlignment">@integer/general_text_alignment</item>
+        <item name="android:typeface">sans</item>
+    </style>
+</resources>

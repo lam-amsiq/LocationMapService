@@ -1,31 +1,31 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 
 android {
-    buildToolsVersion "27.0.3"
     compileSdkVersion 27
     defaultConfig {
         renderscriptTargetApi 27 // must match target sdk and build tools
         targetSdkVersion 27
         minSdkVersion 18
         versionCode 1
-        versionName "0.1"
-        applicationId "lam.com.locationmapservice"
+        versionName "1.0"
         renderscriptSupportModeEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "BASEURLAPI", "\"http://nasie.diskstation.me:7070/locationmapwebservice/api/\""
-        buildConfigField "String", "BASEURLWEB", "\"http://nasie.diskstation.me:7070/locationmapwebservice\""
     }
+
     dataBinding {
         enabled = true
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -118,8 +118,10 @@ dependencies {
     implementation 'com.eightbitlab:blurview:1.4.0'  // https://github.com/Dimezis/BlurView/releases
     implementation 'com.eightbitlab:supportrenderscriptblur:1.0.1'
 
-    implementation project(':locationmapservicelib')
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
 
-    //    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    //    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+realm {
+    syncEnabled = true
 }

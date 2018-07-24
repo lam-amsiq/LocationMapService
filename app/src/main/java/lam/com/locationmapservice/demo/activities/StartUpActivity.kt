@@ -19,10 +19,10 @@ import lam.com.locationmapservice.demo.api.ApiService
 import lam.com.locationmapservice.demo.api.interfaces.IDummyApi
 import lam.com.locationmapservice.demo.dummyData.UserDummy
 import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
-import lam.com.locationmapservice.lib.fragments.map.MapFragment
-import lam.com.locationmapservice.lib.fragments.map.MapFragment_
-import lam.com.locationmapservice.lib.models.Annotation
-import lam.com.locationmapservice.lib.views.dialog.Dialog
+import com.lam.locationmapservicelib.fragments.map.MapFragment
+import com.lam.locationmapservicelib.models.Annotation
+import com.lam.locationmapservicelib.views.dialog.Dialog
+import lam.com.locationmapservice.BuildConfig
 import org.androidannotations.annotations.EActivity
 import org.androidannotations.annotations.InstanceState
 import org.androidannotations.annotations.Receiver
@@ -43,7 +43,7 @@ open class StartUpActivity : DemoActivity() {
         super.onCreate(savedInstanceState)
 
         // Build map
-        mapFragment = MapFragment_.builder().build()
+        mapFragment = MapFragment()
         clearStack()
         beginTransactionTo(mapFragment)
     }
@@ -88,7 +88,7 @@ open class StartUpActivity : DemoActivity() {
                     Log.d("retrofit", "Get annotation success: $response")
                     if (response.isSuccessful) {
                         this.list = LinkedList(response.body())
-                        this.list?.let { list -> mapFragment?.setAnnotations(list, true) }
+                        this.list?.let { list -> setAnnotations(list) }
                     } else {
                         Toast.makeText(this, resources?.getString(R.string.shared_notification_error_server), Toast.LENGTH_LONG).show()
                     }
@@ -100,10 +100,18 @@ open class StartUpActivity : DemoActivity() {
                             Dialog.showDialogNoInternet(this)
                         }
                         if (this.list?.isNotEmpty() == true) {
-                            mapFragment?.setAnnotations(this.list!!, true)
+                            setAnnotations(this.list!!)
                         }
                     }
                 })
+    }
+
+    private fun setAnnotations(list: LinkedList<Annotation>): Unit? {
+        return mapFragment?.setAnnotations(list,
+                true,
+                BuildConfig.BASEURLAPI,
+                if (UserDummy.isMale) R.drawable.as_shared_default_picture_female_round else R.drawable.as_shared_default_picture_male_round,
+                R.drawable.as_shared_default_picture_offline_round)
     }
 
     @Receiver(actions = [(ConnectivityManager.CONNECTIVITY_ACTION)], registerAt = Receiver.RegisterAt.OnResumeOnPause)

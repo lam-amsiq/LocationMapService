@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    // Primary colors
+    <color name="rose_main">#a9193f</color>
+    <color name="rose_bright">#e52457</color>
+    <color name="rose_dark">#811330</color>
+    <color name="rose_light">#b95570</color>
+    <color name="rose_ultra_light">#f4f1f2</color>
+
+    // Neutrals
+    <color name="brightest">#ffffff</color>
+    <color name="ultra_bright">#f9f6f7</color>
+    <color name="brighter">#f1eeef</color>
+    <color name="bright_brighter">#dfdddd</color>
+    <color name="bright">#cdcbcc</color>
+    <color name="dark">#b8b7b8</color>
+    <color name="darker">#9a9899</color>
+    <color name="ultra_dark">#7a7a7a</color>
+    <color name="darkest">#393738</color>
+
+    // Function Colors - Common
+    <color name="text_light">@color/ultra_dark</color>
+    <color name="text_normal">@color/darkest</color>
+    <color name="page_background">@color/rose_ultra_light</color>
+
+    // Buttons
+    <color name="button_rose">@color/rose_bright</color>
+    <color name="button_rose_active">#A01336</color>
+    <color name="button_rose_not_selected">@color/ultra_bright</color>
+
+    // Dialog
+    <color name="custom_dialog_background">@color/brightest</color>
+
+    <color name="custom_dialog_multiple_single_choice_pressed">@color/button_rose</color>
+    <color name="custom_dialog_multiple_single_choice_unpressed">@color/brightest</color>
+    <color name="custom_dialog_multiple_single_choice_pressed_text">@color/brightest</color>
+    <color name="custom_dialog_multiple_single_choice_unpressed_text">@color/ultra_dark</color>
+    <color name="custom_dialog_multiple_single_choice_unpressed_border">@color/ultra_dark</color>
+
+    <color name="custom_dialog_multiple_choice_pressed">@color/button_rose</color>
+    <color name="custom_dialog_multiple_choice_disabled">@color/bright_brighter</color>
+    <color name="custom_dialog_multiple_choice_unpressed">@color/button_rose_not_selected</color>
+    <color name="custom_dialog_multiple_choice_pressed_text">@color/brightest</color>
+    <color name="custom_dialog_multiple_choice_unpressed_text">@color/darker</color>
+    <color name="custom_dialog_multiple_choice_divider">@color/bright_brighter</color>
+
+    <color name="custom_bottom_dialog_background">@color/page_background</color>
+
+    // Map
+    <color name="custom_map_heat_marker_center">#a14</color>
+    <color name="custom_map_heat_marker_middle">#fb0</color>
+    <color name="custom_map_heat_marker_end">#9f0</color>
+
+    <color name="custom_map_user_marker_fill">#ccb95570</color>
+    <color name="custom_map_user_marker_stroke">@color/rose_main</color>
+</resources>

@@ -8,7 +8,6 @@ import kotlinx.android.synthetic.main.dialog_action_item.view.*
 import com.lam.locationmapservicelib.R
 import com.lam.locationmapservicelib.views.dialog.DialogActionItemModel
 import com.lam.locationmapservicelib.views.dialog.views.DialogActionItem
-import com.lam.locationmapservicelib.views.dialog.views.DialogActionItem_
 
 class SingleChoiceAdapter(val context: Context, val isConfirmType: Boolean, val actions: Array<out Any>, var selected: Int? = null) : BaseAdapter() {
     override fun getView(position: Int, _convertView: View?, parent: ViewGroup?): View? {
@@ -17,7 +16,7 @@ class SingleChoiceAdapter(val context: Context, val isConfirmType: Boolean, val 
 
         if (convertView == null) {
             context.let {
-                val view = DialogActionItem_.build(it)
+                val view = DialogActionItem(it)
                 val padding = it.resources.getDimensionPixelSize(R.dimen.padding_6)
                 view.setPadding(view.paddingStart, padding, view.paddingEnd, padding)
                 convertView = view

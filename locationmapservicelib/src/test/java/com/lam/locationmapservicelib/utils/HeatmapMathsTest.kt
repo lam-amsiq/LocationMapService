@@ -1,7 +1,7 @@
-package lam.com.locationmapservice.lib.utils
+package com.lam.locationmapservicelib.utils
 
-import lam.com.locationmapservice.lib.models.Annotation
-import lam.com.locationmapservice.lib.models.Location
+import com.lam.locationmapservicelib.models.Annotation
+import com.lam.locationmapservicelib.models.Location
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -144,7 +144,7 @@ class HeatmapMathsTest {
                 arrayListOf(a10,a9,a11,a12),
                 arrayListOf(a6,a5,a8,a7),
                 arrayListOf(a4,a1,a2,a3)
-                ), arrayListOf(a13))
+        ), arrayListOf(a13))
 
         var actual = HeatmapMaths.computeHashmaps(annotations, .05, true)
 

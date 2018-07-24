@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -23,17 +24,33 @@ import com.lam.locationmapservicelib.views.dialog.adapters.MultipleChoiceAdapter
 import com.lam.locationmapservicelib.views.dialog.adapters.SingleChoiceAdapter
 import com.lam.locationmapservicelib.views.dialog.views.DialogActionItem
 import kotlinx.android.synthetic.main.shared_dialog.view.*
-import org.androidannotations.annotations.EViewGroup
 import java.util.ArrayList
 
-@EViewGroup(R.layout.shared_dialog)
 open class Dialog : LinearLayout {
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-
     private var adapter: BaseAdapter? = null
     private var maxLimit: Int? = null
+    private var cancelActionView: DialogActionItem? = null
+    private var okActionView: DialogActionItem? = null
+
+    constructor(context: Context) : super(context) {
+        inflate()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        inflate()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        inflate()
+    }
+
+    private fun inflate() {
+        val mInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+        mInflater?.inflate(R.layout.shared_dialog, this, true)
+
+        cancelActionView = findViewById(R.id.cancelActionView) as? DialogActionItem
+        okActionView = findViewById(R.id.okActionView) as? DialogActionItem
+    }
 
     private fun setup(illustration: Any?, title: String?, textContent: String?, cancelAction: DialogActionItemModel?, actions: Array<out DialogActionItemModel>, dialog: MaterialDialog?): Dialog {
         setupIllustration(illustration)
@@ -208,7 +225,7 @@ open class Dialog : LinearLayout {
             }
 
             // Setup ok button
-            okActionView?.buttonText?.text = context.getString(R.string.shared_action_ok)
+            okActionView?.setText(context.getString(R.string.shared_action_ok))
             okActionView?.setTextColor(R.color.custom_dialog_multiple_single_choice_pressed_text)
             okActionView?.setOnClickListener {
                 dialog?.dismiss()
@@ -330,8 +347,8 @@ open class Dialog : LinearLayout {
             } ?: return null
         }
 
-        private fun buildView(context: Context?): Dialog {
-            val view = Dialog_.build(context)
+        private fun buildView(context: Context): Dialog {
+            val view = Dialog(context)
             view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             view.gravity = Gravity.CENTER
             return view

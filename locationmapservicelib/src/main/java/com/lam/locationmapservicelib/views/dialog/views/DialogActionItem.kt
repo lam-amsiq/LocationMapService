@@ -6,25 +6,41 @@ import android.os.Build
 import android.support.annotation.AttrRes
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.widget.FrameLayout
 import com.lam.locationmapservicelib.R
 import kotlinx.android.synthetic.main.dialog_action_item.view.*
 import com.lam.locationmapservicelib.utils.ImageLoader
 import com.lam.locationmapservicelib.utils.ViewManager
 import com.lam.locationmapservicelib.views.dialog.DialogActionItemModel
-import org.androidannotations.annotations.EViewGroup
 
-@EViewGroup(R.layout.dialog_action_item)
 open class DialogActionItem : FrameLayout {
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-
     var action: Runnable? = null
+
+    constructor(context: Context) : super(context) {
+        inflate()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        inflate()
+    }
+
+    constructor(context: Context, attrs: AttributeSet?, @AttrRes defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        inflate()
+    }
+
+    private fun inflate() {
+        val mInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
+        mInflater?.inflate(R.layout.dialog_action_item, this, true)
+    }
 
     fun setActionItem(item: DialogActionItemModel) {
         this.action = item.action
         this.buttonText?.text = item.text
+    }
+
+    fun setText(text: String) {
+        this.buttonText?.text = text
     }
 
     fun setTextColor(textColorRes: Int) {

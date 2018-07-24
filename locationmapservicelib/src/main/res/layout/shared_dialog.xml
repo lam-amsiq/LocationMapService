@@ -80,13 +80,13 @@
         android:layout_marginBottom="@dimen/padding_24"
         android:orientation="horizontal">
 
-        <lam.com.locationmapservice.lib.views.dialog.views.DialogActionItem_
+        <com.lam.locationmapservicelib.views.dialog.views.DialogActionItem
             android:id="@+id/cancelActionView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <lam.com.locationmapservice.lib.views.dialog.views.DialogActionItem_
+        <com.lam.locationmapservicelib.views.dialog.views.DialogActionItem
             android:id="@+id/okActionView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

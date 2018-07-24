@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,10 +30,8 @@ import com.lam.locationmapservicelib.fragments.LMSFragment
 import com.lam.locationmapservicelib.fragments.map.controllers.MapController
 import com.lam.locationmapservicelib.models.Annotation
 import com.lam.locationmapservicelib.utils.HeatmapMaths
-import org.androidannotations.annotations.EFragment
 import java.util.*
 
-@EFragment(R.layout.fragment_map)
 open class MapFragment : LMSFragment() {
     var isMapSetup: Boolean? = null
 

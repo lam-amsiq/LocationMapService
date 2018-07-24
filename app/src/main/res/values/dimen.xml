@@ -35,16 +35,6 @@
     <dimen name="default_micro2_text_size">10sp</dimen>
     <dimen name="default_micro1_text_size">8sp</dimen>
 
-    <!-- Dialog -->
-    <dimen name="dialog_width">296dp</dimen>
-    <dimen name="dialog_multiple_choice_divider">1dp</dimen>
-    <dimen name="dialog_corner_radius">12dp</dimen>
-    <dimen name="dialog_illustration_size">98dp</dimen>
-    <dimen name="dialog_button_size">50dp</dimen>
-
-    <!-- Map -->
-    <dimen name="map_user_marker_size">100dp</dimen>
-
     <!-- Annotation page -->
     <dimen name="annotation_portrait_size">160dp</dimen>
     <dimen name="annotation_portrait_stroke_width">2dp</dimen>

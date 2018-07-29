@@ -78,7 +78,7 @@ open class StartUpActivity : DemoActivity() {
     }
 
     @Receiver(actions = [(ConnectivityManager.CONNECTIVITY_ACTION)], registerAt = Receiver.RegisterAt.OnResumeOnPause)
-    internal fun networkChanges() {
+    internal fun onNetworkChange() {
         val hasInternet = isNetworkAvailable()
         noInternetNotification?.height?.toFloat()?.let { from -> getNoInternetAnimation(noInternetNotification, from, 0f, hasInternet)?.start() }
         if (hasInternet) {
@@ -89,7 +89,7 @@ open class StartUpActivity : DemoActivity() {
 
     private fun fetchAndSetAnnotations(mapViewportBounds: LatLngBounds?): Disposable? {
         return ApiService.createService(IDummyApi::class.java)
-                .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.isMale)
+                .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.IS_MALE)
                 .compose(bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -115,17 +115,17 @@ open class StartUpActivity : DemoActivity() {
                 })
     }
 
-    private fun setAnnotations(list: LinkedList<Annotation>): Unit? {
-        return mapFragment?.setAnnotations(list,
+    private fun setAnnotations(list: LinkedList<Annotation>) {
+        mapFragment?.setAnnotations(list,
                 true,
                 BuildConfig.BASEURLAPI,
-                if (UserDummy.isMale) R.drawable.as_shared_default_picture_male_round else R.drawable.as_shared_default_picture_female_round,
+                if (UserDummy.IS_MALE) R.drawable.as_shared_default_picture_male_round else R.drawable.as_shared_default_picture_female_round,
                 R.drawable.as_shared_default_picture_offline_round)
     }
 
     private fun getNoInternetAnimation(view: View, from: Float, to: Float, out: Boolean = false): ObjectAnimator? {
         val frameAnimation = ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, if (out) to else from, if (out) from else to)
-        frameAnimation.duration = animateInDuration
+        frameAnimation.duration = NO_INTERNET_DURATION
         frameAnimation.interpolator = FastOutSlowInInterpolator()
         frameAnimation.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {
@@ -147,6 +147,6 @@ open class StartUpActivity : DemoActivity() {
     }
 
     companion object {
-        const val animateInDuration = 300L
+        private const val NO_INTERNET_DURATION = 300L
     }
 }

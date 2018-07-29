@@ -66,6 +66,18 @@ object MapController {
         mapView?.onLowMemory()
     }
 
+    fun onRequestPermissionsResult(context: Context?, requestCode: Int) {
+        if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE || requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL) {
+            enableMyLocation(context, true)
+        }
+    }
+
+    fun onActivityResult(context: Context?, requestCode: Int) {
+        if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL || requestCode == LocationController.LOCATION_ENABLE_REQUEST_CODE) {
+            enableMyLocation(context, true)
+        }
+    }
+
     fun realmInit(context: Context?) {
         context?.let { contextInner ->
             Realm.init(contextInner)
@@ -91,18 +103,6 @@ object MapController {
             }
         }
         return null
-    }
-
-    fun onRequestPermissionsResult(context: Context?, requestCode: Int) {
-        if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE || requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL) {
-            enableMyLocation(context, true)
-        }
-    }
-
-    fun onActivityResult(context: Context?, requestCode: Int) {
-        if (requestCode == LocationController.LOCATION_PERMISSION_REQUEST_CODE_RATIONAL || requestCode == LocationController.LOCATION_ENABLE_REQUEST_CODE) {
-            enableMyLocation(context, true)
-        }
     }
 
     fun setupMapView(mapView: MapView, savedInstanceState: Bundle?) {

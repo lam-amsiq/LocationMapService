@@ -31,7 +31,7 @@ object HeatmapMaths {
         return Pair(heatmaps, remaining)
     }
 
-    private fun traverseMap(annotation: Annotation, heatmap: ArrayList<Annotation>, annotationMap: HashMap<Annotation, ArrayList<Annotation>>) {
+    internal fun traverseMap(annotation: Annotation, heatmap: ArrayList<Annotation>, annotationMap: HashMap<Annotation, ArrayList<Annotation>>) {
         annotationMap[annotation]?.let { pairedAnnotations ->
             heatmap.add(annotation)
             annotationMap.remove(annotation)
@@ -85,7 +85,7 @@ object HeatmapMaths {
         return matchMap
     }
 
-    fun getDistance(location1: Location?, location2: Location?): Double? {
+    internal fun getDistance(location1: Location?, location2: Location?): Double? {
         location1?.lng?.let { x1 ->
             location1.lat?.let { y1 ->
                 location2?.lng?.let { x2 ->

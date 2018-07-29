@@ -24,16 +24,6 @@ object ViewManager {
         }
     }
 
-    fun setColorFilter(textView: ImageView?, color: Int?, context: Context?) {
-        context?.let { contextLet ->
-            color?.let { color ->
-                ContextCompat.getColor(contextLet, color)
-            }
-        }?.let { colorResult ->
-            textView?.setColorFilter(colorResult)
-        }
-    }
-
     fun setColorFilter(drawable: Drawable?, color: Int?, mode: PorterDuff.Mode?, context: Context?) {
         context?.let { contextLet ->
             color?.let { color ->
@@ -51,14 +41,6 @@ object ViewManager {
             }
         }?.let { resultColor ->
             view?.setBackgroundColor(resultColor)
-        }
-    }
-
-    fun getColor(color: Int?, context: Context?): Int? {
-        return context?.let { contextLet ->
-            color?.let { color ->
-                ContextCompat.getColor(contextLet, color)
-            }
         }
     }
 
@@ -90,6 +72,14 @@ object ViewManager {
             }
         }?.let { resultColor ->
             ForegroundColorSpan(resultColor)
+        }
+    }
+
+    fun getColor(color: Int?, context: Context?): Int? {
+        return context?.let { contextLet ->
+            color?.let { color ->
+                ContextCompat.getColor(contextLet, color)
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ import android.widget.LinearLayout
 import android.widget.ListView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.lam.locationmapservicelib.R
+import com.lam.locationmapservicelib.exceptions.CustomDialogException
 import com.lam.locationmapservicelib.utils.ImageLoader
 import com.lam.locationmapservicelib.views.dialog.adapters.MultipleChoiceAdapter
 import com.lam.locationmapservicelib.views.dialog.adapters.SingleChoiceAdapter
@@ -310,10 +311,7 @@ open class Dialog : LinearLayout {
         }
     }
 
-    class CustomDialogException(override var message: String) : Exception(message)
-
     companion object {
-        private val TAG: String = "DialogV2"
         private var isShowing = false
 
         fun show(context: Context?, illustrationResId: Int?, title: String?, textContent: String?, cancelAction: DialogActionItemModel?, vararg actions: DialogActionItemModel, cancelable: Boolean = true): MaterialDialog? {
@@ -345,6 +343,14 @@ open class Dialog : LinearLayout {
                 view.setupMultiple(illustrationResId, title, textContent, cancelAction, items, dialog, listCallback, maxLimit, selections)
                 return show(dialog, cancelable)
             } ?: return null
+        }
+
+        fun showDialogNoInternet(context: Context?) {
+            context?.let { contextInner ->
+                Dialog.show(contextInner, null, contextInner.resources?.getString(R.string.location_dialog_no_internet_title), contextInner.resources?.getString(R.string.location_dialog_no_internet_content),
+                        DialogActionItemModel(contextInner.resources?.getString(R.string.location_dialog_no_internet_action), null)
+                )
+            }
         }
 
         private fun buildView(context: Context): Dialog {
@@ -381,14 +387,6 @@ open class Dialog : LinearLayout {
             }
 
             return dialog
-        }
-
-        fun showDialogNoInternet(context: Context?) {
-            context?.let { contextInner ->
-                Dialog.show(contextInner, null, contextInner.resources?.getString(R.string.location_dialog_no_internet_title), contextInner.resources?.getString(R.string.location_dialog_no_internet_content),
-                        DialogActionItemModel(contextInner.resources?.getString(R.string.location_dialog_no_internet_action), null)
-                )
-            }
         }
     }
 }

@@ -22,7 +22,9 @@ import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
 import com.lam.locationmapservicelib.fragments.map.MapFragment
 import com.lam.locationmapservicelib.models.Annotation
 import com.lam.locationmapservicelib.views.dialog.Dialog
+import io.reactivex.Observable
 import lam.com.locationmapservice.BuildConfig
+import lam.com.locationmapservice.demo.controllers.SessionController
 import org.androidannotations.annotations.EActivity
 import org.androidannotations.annotations.InstanceState
 import org.androidannotations.annotations.Receiver
@@ -50,11 +52,24 @@ open class StartUpActivity : DemoActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Setup map
-        if (mapFragment?.isMapSetup != true) {
-            mapFragment?.setup(this)
-                    ?.observeOn(AndroidSchedulers.mainThread())
-                    ?.subscribe({ _ ->
+        if (!SessionController.isLoaded && mapFragment?.isMapSetup != true) {
+            // Fetch user
+            val userObservable = SessionController.loadUserAndMeta(UserDummy.USER_ID)
+            userObservable
+                    ?.doOnError {
+                        Log.e("startup", "get user error: $it")
+                    }
+
+            // setup map
+            val mapObservable = mapFragment?.setup(this)
+            mapObservable
+                    ?.doOnError {
+                        Log.e("startup", "Map setup error: $it")
+                    }
+
+            Observable.concat(userObservable, mapObservable)
+                    ?.compose(bindToLifecycle())
+                    ?.doOnComplete {
                         // Listen for click events on map annotations
                         mapFragment?.getAnnotationObserver()
                                 ?.observeOn(Schedulers.io())
@@ -71,9 +86,8 @@ open class StartUpActivity : DemoActivity() {
                             // Add dummy annotations
                             fetchAndSetAnnotations(mapFragment?.getViewportBounds())
                         }
-                    }, {
-                        Log.e("startup", "Map setup error: $it")
-                    })
+                    }
+                    ?.subscribe()
         }
     }
 
@@ -87,9 +101,9 @@ open class StartUpActivity : DemoActivity() {
         }
     }
 
-    private fun fetchAndSetAnnotations(mapViewportBounds: LatLngBounds?): Disposable? {
+    private fun fetchAndSetAnnotations(mapViewportBounds: LatLngBounds?): Disposable {
         return ApiService.createService(IDummyApi::class.java)
-                .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.IS_MALE)
+                .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.USER_ID)
                 .compose(bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -119,7 +133,7 @@ open class StartUpActivity : DemoActivity() {
         mapFragment?.setAnnotations(list,
                 true,
                 BuildConfig.BASEURLAPI,
-                if (UserDummy.IS_MALE) R.drawable.as_shared_default_picture_male_round else R.drawable.as_shared_default_picture_female_round,
+                if (SessionController.meta?.isMale() == true) R.drawable.as_shared_default_picture_male_round else R.drawable.as_shared_default_picture_female_round,
                 R.drawable.as_shared_default_picture_offline_round)
     }
 

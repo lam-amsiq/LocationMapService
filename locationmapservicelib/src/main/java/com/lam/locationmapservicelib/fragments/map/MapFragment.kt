@@ -1,8 +1,5 @@
 package com.lam.locationmapservicelib.fragments.map
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.AnimatorSet
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -18,7 +15,6 @@ import com.google.android.gms.maps.model.Marker
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
@@ -64,10 +60,10 @@ open class MapFragment : LMSFragment() {
         return rootView
     }
 
-    fun setup(context: Context, annotationSize: Int = 100): Single<GoogleMap>? {
+    fun setup(context: Context, annotationSize: Int = 100): Observable<GoogleMap>? {
         this.annotationSize = annotationSize
         return MapController.setupMap(context)
-                .doOnSuccess { isMapSetup = true }
+                .doOnComplete { isMapSetup = true }
                 .doOnError { isMapSetup = false }
     }
 

@@ -112,8 +112,8 @@ object MapController {
         this.mapView?.onResume() // needed to get the map to display immediately
     }
 
-    fun setupMap(context: Context?): Single<GoogleMap> {
-        return Single.create<GoogleMap> { emitter ->
+    fun setupMap(context: Context?): Observable<GoogleMap> {
+        return Observable.create<GoogleMap> { emitter ->
             try {
                 context?.let { contextInner ->
                     MapsInitializer.initialize(contextInner)
@@ -125,10 +125,11 @@ object MapController {
 
                         if (!emitter.isDisposed) {
                             mMap?.let { map ->
-                                emitter.onSuccess(map)
+                                emitter.onNext(map)
                             } ?: kotlin.run {
                                 emitter.onError(Throwable(NullPointerException("Failed initializing map")))
                             }
+                            emitter.onComplete()
                         }
                     }
                 } ?: kotlin.run {
@@ -141,7 +142,8 @@ object MapController {
                     emitter.onError(e)
                 }
             }
-        }
+        }.observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
     }
 
     fun getMarkerObserver(): Observable<Pair<Annotation, Marker>> {
@@ -208,7 +210,7 @@ object MapController {
                                         locationObservable?.dispose()
                                     }
                                 }, { error ->
-                                    LMSLog.w(message="Failed to get location async: $error")
+                                    LMSLog.w(message = "Failed to get location async: $error")
                                 })
                     }
                 }
@@ -233,9 +235,11 @@ object MapController {
 
     fun getGroupDistance(annotationSize: Int): Double {
         val viewportBounds = getViewportBounds()
-        val viewportWidth = (viewportBounds?.northeast?.longitude ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
-        val viewportHeight = (viewportBounds?.northeast?.longitude ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
-        return (if(viewportWidth > viewportHeight) viewportWidth else viewportHeight) / (annotationSize / 8.0)
+        val viewportWidth = (viewportBounds?.northeast?.longitude
+                ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
+        val viewportHeight = (viewportBounds?.northeast?.longitude
+                ?: 0.0) - (viewportBounds?.southwest?.longitude ?: 100.0)
+        return (if (viewportWidth > viewportHeight) viewportWidth else viewportHeight) / (annotationSize / 8.0)
     }
 
     fun addUserCircle(position: LatLng, size: Double): Circle? {

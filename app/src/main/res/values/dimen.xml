@@ -35,6 +35,9 @@
     <dimen name="default_micro2_text_size">10sp</dimen>
     <dimen name="default_micro1_text_size">8sp</dimen>
 
+    <!-- Startup page -->
+    <dimen name="startup_control_panel_height">30dp</dimen>
+
     <!-- Annotation page -->
     <dimen name="annotation_portrait_size">160dp</dimen>
     <dimen name="annotation_portrait_stroke_width">2dp</dimen>

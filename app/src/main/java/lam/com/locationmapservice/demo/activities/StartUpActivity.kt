@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.Log
 import android.view.View
+import android.widget.CompoundButton
 import android.widget.Toast
 import com.google.android.gms.maps.model.LatLngBounds
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -25,9 +26,7 @@ import com.lam.locationmapservicelib.views.dialog.Dialog
 import io.reactivex.Observable
 import lam.com.locationmapservice.BuildConfig
 import lam.com.locationmapservice.demo.controllers.SessionController
-import org.androidannotations.annotations.EActivity
-import org.androidannotations.annotations.InstanceState
-import org.androidannotations.annotations.Receiver
+import org.androidannotations.annotations.*
 import java.net.UnknownHostException
 import java.util.*
 
@@ -55,21 +54,29 @@ open class StartUpActivity : DemoActivity() {
         if (!SessionController.isLoaded && mapFragment?.isMapSetup != true) {
             // Fetch user
             val userObservable = SessionController.loadUserAndMeta(UserDummy.USER_ID)
-            userObservable
-                    ?.doOnError {
+                    .doOnComplete {
+                        runOnUiThread {
+                            enableLocationSwitch?.isChecked = SessionController.user?.position?.enabled == true
+                            enableLocationSwitch?.visibility = View.VISIBLE
+                        }
+                    }
+                    .doOnError {
                         Log.e("startup", "get user error: $it")
                     }
 
             // setup map
             val mapObservable = mapFragment?.setup(this)
-            mapObservable
                     ?.doOnError {
                         Log.e("startup", "Map setup error: $it")
                     }
 
             Observable.concat(userObservable, mapObservable)
-                    ?.compose(bindToLifecycle())
-                    ?.doOnComplete {
+                    .compose(bindToLifecycle())
+                    .doOnComplete {
+                        if (SessionController.user?.position?.enabled == true) {
+                            SessionController.startPositionLoop(this)
+                        }
+
                         // Listen for click events on map annotations
                         mapFragment?.getAnnotationObserver()
                                 ?.observeOn(Schedulers.io())
@@ -87,7 +94,9 @@ open class StartUpActivity : DemoActivity() {
                             fetchAndSetAnnotations(mapFragment?.getViewportBounds())
                         }
                     }
-                    ?.subscribe()
+                    .subscribe()
+        } else {
+            SessionController.startPositionLoop(this)
         }
     }
 
@@ -97,13 +106,42 @@ open class StartUpActivity : DemoActivity() {
         noInternetNotification?.height?.toFloat()?.let { from -> getNoInternetAnimation(noInternetNotification, from, 0f, hasInternet)?.start() }
         if (hasInternet) {
             noInternetShown = false
+
+            if (!SessionController.isLoaded) {
+                SessionController.loadUserAndMeta(UserDummy.USER_ID)
+                        .observeOn(Schedulers.io())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe ( {
+                            runOnUiThread {
+                                enableLocationSwitch?.isChecked = SessionController.user?.position?.enabled == true
+                                enableLocationSwitch?.visibility = View.VISIBLE
+                            }
+                        },  {
+                            Log.e("startup", "get user error: $it")
+                        })
+            } else {
+                enableLocationSwitch?.visibility = View.VISIBLE
+            }
+
             fetchAndSetAnnotations(mapFragment?.getViewportBounds())
+        } else {
+            enableLocationSwitch?.visibility = View.GONE
         }
+    }
+
+    @Click(R.id.refreshButton)
+    fun refreshClick() {
+        fetchAndSetAnnotations(mapFragment?.getViewportBounds())
+    }
+
+    @CheckedChange(R.id.enableLocationSwitch)
+    fun enableLocationClick(buttonView: CompoundButton, isChecked: Boolean) {
+        SessionController.enableLocation(this, isChecked)
     }
 
     private fun fetchAndSetAnnotations(mapViewportBounds: LatLngBounds?): Disposable {
         return ApiService.createService(IDummyApi::class.java)
-                .getDummyAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.USER_ID)
+                .getAnnotations(mapViewportBounds?.southwest?.latitude?.toFloat(), mapViewportBounds?.northeast?.latitude?.toFloat(), mapViewportBounds?.southwest?.longitude?.toFloat(), mapViewportBounds?.northeast?.longitude?.toFloat(), UserDummy.USER_ID)
                 .compose(bindToLifecycle())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -116,7 +154,7 @@ open class StartUpActivity : DemoActivity() {
                         Toast.makeText(this, resources?.getString(R.string.shared_notification_error_server), Toast.LENGTH_LONG).show()
                     }
                 }, { error ->
-                    Log.e("startup", "getDummyAnnotations error: $error")
+                    Log.e("startup", "getAnnotations error: $error")
                     if (error is UnknownHostException) {
                         if (!noInternetShown) {
                             noInternetShown = true

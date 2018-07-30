@@ -74,7 +74,7 @@ open class AnnotationFragment : DemoFullscreenFragment() {
     private fun setMeta() {
         annotation?.annotation_id?.let { annotationId ->
             ApiService.createService(IDummyApi::class.java)
-                    .getDummyAnnotationMeta(annotationId)
+                    .getAnnotationMeta(annotationId)
                     .compose(bindToLifecycle())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())

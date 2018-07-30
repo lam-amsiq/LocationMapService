@@ -24,6 +24,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <TextView
+        android:id="@+id/refreshButton"
+        style="@style/Small1"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/startup_control_panel_height"
+        app:layout_constraintBottom_toBottomOf="@+id/enableLocationSwitch"
+        app:layout_constraintTop_toTopOf="@+id/enableLocationSwitch"
+        app:layout_constraintEnd_toStartOf="@id/enableLocationSwitch"
+        android:paddingStart="@dimen/padding_4"
+        android:paddingEnd="@dimen/padding_4"
+        android:background="@color/shared_button_background"
+        android:textColor="@color/selector_shared_button_text"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:text="@string/startup_refresh_map"/>
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/enableLocationSwitch"
+        style="@style/Small1"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/startup_control_panel_height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/noInternetNotification"
+        android:layout_margin="@dimen/padding_8"
+        android:padding="@dimen/padding_4"
+        app:switchPadding="2dp"
+        app:trackTint="@color/selector_shared_switch_track"
+        app:thumbTint="@color/shared_switch_track_thumb"
+        android:text="@string/startup_enable_location"
+        android:textColor="@color/startup_enable_location_text"
+        android:background="@color/startup_enable_location_background"
+        android:visibility="gone"/>
+
     <FrameLayout
         android:id="@+id/fullscreenFragmentPlaceholder"
         android:layout_width="0dp"

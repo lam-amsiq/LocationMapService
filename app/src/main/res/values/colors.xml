@@ -36,6 +36,26 @@
     <color name="text_normal">@color/darkest</color>
     <color name="page_background">@color/rose_ultra_light</color>
 
+    // Shared map buttons
+    <color name="shared_map_button_text_pressed">@color/darkest</color>
+    <color name="shared_map_button_text_unpressed">@color/bright_brighter</color>
+    <color name="shared_map_button_background_pressed">@color/bright_brighter</color>
+    <color name="shared_map_button_background_unpressed">#aa393738</color>
+
+    // Shared switch
+    <color name="shared_switch_track_disabled">@color/shared_map_button_background_unpressed</color>
+    <color name="shared_switch_track_enabled">@color/shared_map_button_background_pressed</color>
+    <color name="shared_switch_track_thumb">@color/shared_map_button_background_pressed</color>
+
+    // Shared button
+    <color name="shared_button_text_pressed">@color/shared_map_button_text_pressed</color>
+    <color name="shared_button_text_unpressed">@color/shared_map_button_text_unpressed</color>
+    <color name="shared_button_background">@color/shared_map_button_background_unpressed</color>
+
+    // Startup page
+    <color name="startup_enable_location_text">@color/shared_map_button_text_unpressed</color>
+    <color name="startup_enable_location_background">@color/shared_switch_track_disabled</color>
+
     // Annotation page
     <color name="custom_annotation_portrait_stroke">@color/darker</color>
 </resources>

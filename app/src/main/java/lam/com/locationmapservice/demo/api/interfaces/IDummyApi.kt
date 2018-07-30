@@ -9,24 +9,24 @@ import retrofit2.http.*
 interface IDummyApi {
     @Headers("Content-Type: application/json")
     @GET("dummy/annotations")
-    fun getDummyAnnotations(@Query("latMin") latMin: Float? = -90f,
-                            @Query("latMax") latMax: Float? = 90f,
-                            @Query("lngMin") lngMin: Float? = -180f,
-                            @Query("lngMax") lngMax: Float? = 180f,
-                            @Query("id") annotationId: Long): Observable<Response<ArrayList<Annotation>>>
+    fun getAnnotations(@Query("latMin") latMin: Float? = -90f,
+                       @Query("latMax") latMax: Float? = 90f,
+                       @Query("lngMin") lngMin: Float? = -180f,
+                       @Query("lngMax") lngMax: Float? = 180f,
+                       @Query("id") annotationId: Long): Observable<Response<ArrayList<Annotation>>>
 
     @Headers("Content-Type: application/json")
     @GET("dummy/{id}")
-    fun getDummyAnnotation(@Path("id") id: Long): Observable<Response<Annotation>>
+    fun getAnnotation(@Path("id") id: Long): Observable<Response<Annotation>>
 
     @Headers("Content-Type: application/json")
     @GET("dummy/meta/{id}")
-    fun getDummyAnnotationMeta(@Path("id") id: Long): Observable<Response<AnnotationMeta>>
+    fun getAnnotationMeta(@Path("id") id: Long): Observable<Response<AnnotationMeta>>
 
     @Headers("Content-Type: application/json")
     @PUT("dummy/position")
     fun updatePosition(@Query("lat") lat: Float,
-                            @Query("lng") lng: Float,
-                            @Query("enabled") enabled: Float,
-                            @Query("id") annotationId: Long): Observable<Response<String>>
+                       @Query("lng") lng: Float,
+                       @Query("enabled") enabled: Boolean,
+                       @Query("id") annotationId: Long): Observable<Response<String>>
 }

@@ -8,4 +8,7 @@
     <string name="shared_action_cancel">Cancel</string>
     <string name="shared_notification_error_server">Sorry, a server error occurred. Please try again later.</string>
     <string name="shared_notification_error_no_internet">No internet connection</string>
+
+    <string name="startup_enable_location">Enable location</string>
+    <string name="startup_refresh_map">Refresh</string>
 </resources>

@@ -41,6 +41,7 @@
     <color name="shared_map_button_text_unpressed">@color/bright_brighter</color>
     <color name="shared_map_button_background_pressed">@color/bright_brighter</color>
     <color name="shared_map_button_background_unpressed">#aa393738</color>
+    <color name="shared_map_button_border">#cc393738</color>
 
     // Shared switch
     <color name="shared_switch_track_disabled">@color/shared_map_button_background_unpressed</color>

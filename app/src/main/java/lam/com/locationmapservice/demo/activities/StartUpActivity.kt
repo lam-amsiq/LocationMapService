@@ -171,7 +171,7 @@ open class StartUpActivity : DemoActivity() {
         mapFragment?.setAnnotations(list,
                 true,
                 BuildConfig.BASEURLAPI,
-                if (SessionController.meta?.isMale() == true) R.drawable.as_shared_default_picture_male_round else R.drawable.as_shared_default_picture_female_round,
+                if (SessionController.meta?.isMale() == true) R.drawable.as_shared_default_picture_female_round else R.drawable.as_shared_default_picture_male_round,
                 R.drawable.as_shared_default_picture_offline_round)
     }
 

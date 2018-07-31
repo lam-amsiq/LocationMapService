@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -21,8 +23,10 @@ import com.lam.locationmapservicelib.R
 import com.lam.locationmapservicelib.enums.LocationUpdateType
 import com.lam.locationmapservicelib.exceptions.location.MissingDevicePermissionException
 import com.lam.locationmapservicelib.models.LocationUpdate
+import com.lam.locationmapservicelib.models.Annotation
 import com.lam.locationmapservicelib.views.dialog.Dialog
 import com.lam.locationmapservicelib.views.dialog.DialogActionItemModel
+import java.util.*
 
 object LocationController {
     const val LOCATION_ENABLE_REQUEST_CODE = 4000
@@ -82,6 +86,15 @@ object LocationController {
                 emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
             }
         }
+    }
+
+    fun getCityName(context: Context?, annotation: Annotation?): Address? {
+        val addresses = annotation?.position?.lat?.let { lat ->
+            annotation.position?.lng?.let { lng ->
+                context?.let { contextInner ->Geocoder(contextInner, Locale.getDefault()).getFromLocation(lat, lng, 1) }
+            }
+        }
+        return addresses?.firstOrNull()
     }
 
     fun askUserToTurnOnLocationServices(context: Context?) {

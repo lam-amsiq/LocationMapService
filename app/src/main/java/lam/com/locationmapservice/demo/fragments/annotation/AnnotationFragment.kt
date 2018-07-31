@@ -2,7 +2,6 @@ package lam.com.locationmapservice.demo.fragments.annotation
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.location.Address
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.Log
 import android.util.Property
@@ -23,8 +22,7 @@ import com.lam.locationmapservicelib.models.Annotation
 import com.lam.locationmapservicelib.utils.extensions.fitCenter
 import org.androidannotations.annotations.AfterViews
 import org.androidannotations.annotations.EFragment
-import android.location.Geocoder
-import java.util.*
+import com.lam.locationmapservicelib.controllers.location.LocationController
 
 @EFragment(R.layout.fragment_annotation)
 open class AnnotationFragment : DemoFullscreenFragment() {
@@ -82,7 +80,7 @@ open class AnnotationFragment : DemoFullscreenFragment() {
                         Log.d("annotation", "Get annotation meta success: $response")
                         if (response.isSuccessful) {
                             response.body()?.let { meta ->
-                                summaryView.text = "${meta.age}${getCityName()?.let { address -> " \u2022 ${address.locality}" }}"
+                                summaryView.text = "${meta.age}${LocationController.getCityName(context, annotation)?.let { address -> " \u2022 ${address.locality}" }}"
                                 meta.defaultPortrait()?.let { defaultPortrait ->
                                     setPortrait(defaultPortrait)
                                 }
@@ -101,15 +99,6 @@ open class AnnotationFragment : DemoFullscreenFragment() {
                                 .into(portraitView)
                     })
         }
-    }
-
-    private fun getCityName(): Address? {
-        val addresses = annotation?.position?.lat?.let { lat ->
-            annotation?.position?.lng?.let { lng ->
-                Geocoder(context, Locale.getDefault()).getFromLocation(lat, lng, 1)
-            }
-        }
-        return addresses?.firstOrNull()
     }
 
     private fun setPortrait(default: Int) {

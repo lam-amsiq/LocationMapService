@@ -12,7 +12,7 @@
         android:layout_width="@dimen/annotation_portrait_size"
         android:layout_height="@dimen/annotation_portrait_size"
         android:layout_marginTop="@dimen/padding_60"
-        android:background="@drawable/shape_annotation_portrait"
+        android:background="@drawable/shape_annotation_portrait_stroke"
         android:padding="@dimen/annotation_portrait_stroke_width"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

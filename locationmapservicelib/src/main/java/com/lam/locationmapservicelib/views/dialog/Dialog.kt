@@ -23,15 +23,15 @@ import com.lam.locationmapservicelib.exceptions.CustomDialogException
 import com.lam.locationmapservicelib.utils.ImageLoader
 import com.lam.locationmapservicelib.views.dialog.adapters.MultipleChoiceAdapter
 import com.lam.locationmapservicelib.views.dialog.adapters.SingleChoiceAdapter
-import com.lam.locationmapservicelib.views.dialog.views.DialogActionItem
+import com.lam.locationmapservicelib.views.dialog.views.DialogActionItemView
 import kotlinx.android.synthetic.main.shared_dialog.view.*
 import java.util.ArrayList
 
 open class Dialog : LinearLayout {
     private var adapter: BaseAdapter? = null
     private var maxLimit: Int? = null
-    private var cancelActionView: DialogActionItem? = null
-    private var okActionView: DialogActionItem? = null
+    private var cancelActionView: DialogActionItemView? = null
+    private var okActionView: DialogActionItemView? = null
 
     constructor(context: Context) : super(context) {
         inflate()
@@ -49,8 +49,8 @@ open class Dialog : LinearLayout {
         val mInflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as? LayoutInflater
         mInflater?.inflate(R.layout.shared_dialog, this, true)
 
-        cancelActionView = findViewById(R.id.cancelActionView) as? DialogActionItem
-        okActionView = findViewById(R.id.okActionView) as? DialogActionItem
+        cancelActionView = findViewById(R.id.cancelActionView) as? DialogActionItemView
+        okActionView = findViewById(R.id.okActionView) as? DialogActionItemView
     }
 
     private fun setup(illustration: Any?, title: String?, textContent: String?, cancelAction: DialogActionItemModel?, actions: Array<out DialogActionItemModel>, dialog: MaterialDialog?): Dialog {
@@ -82,7 +82,7 @@ open class Dialog : LinearLayout {
             adapter = SingleChoiceAdapter(context, actions.size > 2, actions)
             actionListView?.setOnItemClickListener { _, view, _, _ ->
                 dialog?.dismiss()
-                val dialogItemView = view as? DialogActionItem
+                val dialogItemView = view as? DialogActionItemView
                 dialogItemView?.action?.run()
             }
 
@@ -119,7 +119,7 @@ open class Dialog : LinearLayout {
 
             adapter = SingleChoiceAdapter(context, items.size > 2, items.toArray(), selected)
             actionListView?.setOnItemClickListener { _, view, _, _ ->
-                val dialogItemView = view as? DialogActionItem
+                val dialogItemView = view as? DialogActionItemView
                 dialog?.dismiss()
                 dialogItemView?.action?.run()
             }

@@ -5,7 +5,6 @@ import android.util.Log
 import com.lam.locationmapservicelib.controllers.location.LocationController
 import com.lam.locationmapservicelib.enums.LocationUpdateType
 import com.lam.locationmapservicelib.models.Annotation
-import com.lam.locationmapservicelib.models.LocationUpdate
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -81,22 +80,22 @@ object SessionController {
                                 positionTimestamp = timestamp
 
                                 if (locationUpdate.type == LocationUpdateType.Location) {
-                                    val location = locationUpdate.data.getParcelable<android.location.Location>(LocationUpdate.LOCATION_BUNDLE_KEY)
-
-                                    user?.annotation_id?.let { userId ->
-                                        ApiService.createService(IDummyApi::class.java)
-                                                .updatePosition(location.latitude.toFloat(), location.longitude.toFloat(), user?.position?.enabled == true, userId)
-                                                .observeOn(Schedulers.io())
-                                                .subscribeOn(Schedulers.io())
-                                                .subscribe({ response ->
-                                                    if (response.isSuccessful) {
-                                                        Log.d("session", "location update patched: (${location.latitude}, ${location.longitude}) -> ${response.body()}")
-                                                    } else {
-                                                        Log.d("session", "location update patch error: ${response.code()} - ${response.errorBody()}")
-                                                    }
-                                                }, { error ->
-                                                    Log.d("session", "location update patch error $error")
-                                                })
+                                    locationUpdate.getLocation()?.let { location ->
+                                        user?.annotation_id?.let { userId ->
+                                            ApiService.createService(IDummyApi::class.java)
+                                                    .updatePosition(location.latitude.toFloat(), location.longitude.toFloat(), user?.position?.enabled == true, userId)
+                                                    .observeOn(Schedulers.io())
+                                                    .subscribeOn(Schedulers.io())
+                                                    .subscribe({ response ->
+                                                        if (response.isSuccessful) {
+                                                            Log.d("session", "location update patched: (${location.latitude}, ${location.longitude}) -> ${response.body()}")
+                                                        } else {
+                                                            Log.d("session", "location update patch error: ${response.code()} - ${response.errorBody()}")
+                                                        }
+                                                    }, { error ->
+                                                        Log.d("session", "location update patch error $error")
+                                                    })
+                                        }
                                     }
                                 }
                             }

@@ -59,4 +59,5 @@
 
     // Annotation page
     <color name="custom_annotation_portrait_stroke">@color/darker</color>
+    <color name="custom_annotation_portrait_fill">@color/bright_brighter</color>
 </resources>

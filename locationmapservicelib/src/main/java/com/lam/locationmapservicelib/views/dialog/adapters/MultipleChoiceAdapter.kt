@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import kotlinx.android.synthetic.main.dialog_action_item.view.*
 import com.lam.locationmapservicelib.R
-import com.lam.locationmapservicelib.views.dialog.views.DialogActionItem
+import com.lam.locationmapservicelib.views.dialog.views.DialogActionItemView
 import java.util.ArrayList
 
 class MultipleChoiceAdapter (val context: Context, val items: ArrayList<String>, selections: ArrayList<Int> = ArrayList(), private val maxLimit: Int? = null) : BaseAdapter() {
@@ -23,9 +23,9 @@ class MultipleChoiceAdapter (val context: Context, val items: ArrayList<String>,
         var convertView = _convertView
         val itemIndex = items[position]
 
-        context.let { convertView = DialogActionItem(context) }
+        context.let { convertView = DialogActionItemView(context) }
 
-        (convertView as? DialogActionItem)?.let { listItemView ->
+        (convertView as? DialogActionItemView)?.let { listItemView ->
             listItemView.buttonText?.text = itemIndex
 
             // Set colors

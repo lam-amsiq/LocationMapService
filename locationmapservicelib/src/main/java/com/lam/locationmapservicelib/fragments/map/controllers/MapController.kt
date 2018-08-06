@@ -11,7 +11,6 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.heatmaps.Gradient
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -23,7 +22,6 @@ import com.lam.locationmapservicelib.controllers.location.LocationController
 import com.lam.locationmapservicelib.enums.LocationUpdateType
 import com.lam.locationmapservicelib.models.Location
 import com.lam.locationmapservicelib.models.Annotation
-import com.lam.locationmapservicelib.models.LocationUpdate
 import com.lam.locationmapservicelib.utils.LMSLog
 
 object MapController {
@@ -204,9 +202,9 @@ object MapController {
                                 ?.subscribeOn(Schedulers.io())
                                 ?.subscribe({ locationUpdate ->
                                     if (locationUpdate.type == LocationUpdateType.Location) {
-                                        val location = locationUpdate.data.getParcelable<android.location.Location>(LocationUpdate.LOCATION_BUNDLE_KEY)
+                                        val location = locationUpdate.getLocation()
                                         googleMap?.isMyLocationEnabled = true
-                                        zoomCameraTo(Location(location.latitude, location.longitude), 12f)
+                                        zoomCameraTo(Location(location?.latitude, location?.longitude), 12f)
                                         locationObservable?.dispose()
                                     }
                                 }, { error ->

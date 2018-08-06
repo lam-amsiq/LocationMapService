@@ -14,7 +14,7 @@ import com.lam.locationmapservicelib.utils.ImageLoader
 import com.lam.locationmapservicelib.utils.ViewManager
 import com.lam.locationmapservicelib.views.dialog.DialogActionItemModel
 
-open class DialogActionItem : FrameLayout {
+open class DialogActionItemView : FrameLayout {
     var action: Runnable? = null
 
     constructor(context: Context) : super(context) {

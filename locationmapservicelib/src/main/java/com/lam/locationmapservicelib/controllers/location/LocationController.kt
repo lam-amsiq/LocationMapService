@@ -18,7 +18,6 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
-import io.reactivex.schedulers.Schedulers
 import com.lam.locationmapservicelib.R
 import com.lam.locationmapservicelib.enums.LocationUpdateType
 import com.lam.locationmapservicelib.exceptions.location.MissingDevicePermissionException
@@ -37,21 +36,25 @@ object LocationController {
     private val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
     private var isShowingNativePrompt = false
 
-    private var emitter: ObservableEmitter<LocationUpdate>? = null
+    private var emitters = arrayListOf<ObservableEmitter<LocationUpdate>?>()
     private var observable: Observable<LocationUpdate>? = null
-        get() = if (field != null) {
-            field
-        } else {
-            Observable.create<LocationUpdate> { emitter -> this.emitter = emitter }
-                    .observeOn(Schedulers.io())
+
+    private fun getObserver(): Observable<LocationUpdate> {
+        if (this.observable == null) {
+            this.observable = Observable.create<LocationUpdate> { emitter ->
+                emitters.add(emitter)
+            }
         }
+        return this.observable!!
+    }
 
     private val locationListener = object : android.location.LocationListener {
         override fun onLocationChanged(location: Location?) {
             val data = Bundle()
             data.putParcelable(LocationUpdate.LOCATION_BUNDLE_KEY, location)
 
-            if (emitter?.isDisposed != true) {
+            trimEmitters()
+            emitters.forEach { emitter ->
                 emitter?.onNext(LocationUpdate(LocationUpdateType.Location, data))
             }
         }
@@ -62,7 +65,8 @@ object LocationController {
             data.putInt(LocationUpdate.STATUS_BUNDLE_KEY, status)
             data.putBundle(LocationUpdate.EXTRA_BUNDLE_KEY, extra)
 
-            if (emitter?.isDisposed != true) {
+            trimEmitters()
+            emitters.forEach { emitter ->
                 emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
             }
         }
@@ -72,7 +76,8 @@ object LocationController {
             data.putString(LocationUpdate.PROVIDER_BUNDLE_KEY, provider)
             data.putBoolean(LocationUpdate.PROVIDER_ENABLE_BUNDLE_KEY, true)
 
-            if (emitter?.isDisposed != true) {
+            trimEmitters()
+            emitters.forEach { emitter ->
                 emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
             }
         }
@@ -82,7 +87,8 @@ object LocationController {
             data.putString(LocationUpdate.PROVIDER_BUNDLE_KEY, provider)
             data.putBoolean(LocationUpdate.PROVIDER_ENABLE_BUNDLE_KEY, true)
 
-            if (emitter?.isDisposed != true) {
+            trimEmitters()
+            emitters.forEach { emitter ->
                 emitter?.onNext(LocationUpdate(LocationUpdateType.Status, data))
             }
         }
@@ -91,7 +97,7 @@ object LocationController {
     fun getCityName(context: Context?, annotation: Annotation?): Address? {
         val addresses = annotation?.position?.lat?.let { lat ->
             annotation.position?.lng?.let { lng ->
-                context?.let { contextInner ->Geocoder(contextInner, Locale.getDefault()).getFromLocation(lat, lng, 1) }
+                context?.let { contextInner -> Geocoder(contextInner, Locale.getDefault()).getFromLocation(lat, lng, 1) }
             }
         }
         return addresses?.firstOrNull()
@@ -100,7 +106,8 @@ object LocationController {
     fun askUserToTurnOnLocationServices(context: Context?) {
         Dialog.show(context, null, context?.getString(R.string.location_dialog_location_is_off_title), context?.getString(R.string.location_dialog_location_is_off_content),
                 DialogActionItemModel(context?.getString(R.string.shared_action_cancel), Runnable {
-                    if (emitter?.isDisposed != true) {
+                    trimEmitters()
+                    emitters.forEach { emitter ->
                         emitter?.onComplete()
                     }
                 }),
@@ -123,12 +130,13 @@ object LocationController {
 
     @SuppressLint("MissingPermission") // hasDeviceLocationPermission method handles this issue
     fun getLocationASync(context: Context?, looper: Looper?): Observable<LocationUpdate>? {
-        val observer = this.observable
+        val observer = getObserver()
 
         if (hasDeviceLocationPermission(context)) {
             getLocationManager(context)?.requestSingleUpdate(PROVIDER, locationListener, looper)
         } else {
-            if (emitter?.isDisposed != true) {
+            trimEmitters()
+            emitters.forEach { emitter ->
                 emitter?.onError(MissingDevicePermissionException("Missing location permissions"))
             }
         }
@@ -137,12 +145,13 @@ object LocationController {
 
     @SuppressLint("MissingPermission")  // hasDeviceLocationPermission method handles this issue
     fun getUpdates(context: Context?, minTime: Long, minDistance: Float): Observable<LocationUpdate>? {
-        val observer = this.observable
+        val observer = getObserver()
 
         if (hasDeviceLocationPermission(context)) {
             getLocationManager(context)?.requestLocationUpdates(PROVIDER, minTime, minDistance, locationListener)
         } else {
-            if (emitter?.isDisposed != true) {
+            trimEmitters()
+            emitters.forEach { emitter ->
                 emitter?.onError(MissingDevicePermissionException("Missing location permissions"))
             }
         }
@@ -214,5 +223,9 @@ object LocationController {
                         goToSettings(contextInner)
                     }))
         }
+    }
+
+    private fun trimEmitters() {
+        emitters.removeAll { it == null || it.isDisposed }
     }
 }

@@ -190,13 +190,12 @@ object MapController {
     private fun enableMyLocation(context: Context?, zoomToMyLocation: Boolean = false): Boolean? {
         mapView?.context?.let { contextInner ->
             if (LocationController.hasFullPermissionAndIsProviderEnable(contextInner) && googleMap?.isMyLocationEnabled != true) {
+                googleMap?.isMyLocationEnabled = true
 
                 if (zoomToMyLocation) {
                     LocationController.getCachedLocation(contextInner)?.let { location ->
-                        googleMap?.isMyLocationEnabled = true
                         zoomCameraTo(Location(location.latitude, location.longitude), 12f)
                     } ?: kotlin.run {
-                        googleMap?.isMyLocationEnabled = false
                         locationObservable = LocationController.getLocationASync(context, Looper.getMainLooper())
                                 ?.observeOn(AndroidSchedulers.mainThread())
                                 ?.subscribeOn(Schedulers.io())

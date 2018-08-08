@@ -23,7 +23,6 @@ import lam.com.locationmapservice.demo.fragments.annotation.AnnotationFragment_
 import com.lam.locationmapservicelib.fragments.map.MapFragment
 import com.lam.locationmapservicelib.models.Annotation
 import com.lam.locationmapservicelib.views.dialog.Dialog
-import io.reactivex.Observable
 import lam.com.locationmapservice.BuildConfig
 import lam.com.locationmapservice.demo.controllers.SessionController
 import org.androidannotations.annotations.*
@@ -53,30 +52,25 @@ open class StartUpActivity : DemoActivity() {
         super.onResume()
         if (!SessionController.isLoaded && mapFragment?.isMapSetup != true) {
             // Fetch user
-            val userObservable = SessionController.loadUserAndMeta(UserDummy.USER_ID)
-                    .doOnComplete {
-                        runOnUiThread {
-                            enableLocationSwitch?.isChecked = SessionController.user?.position?.enabled == true
-                            enableLocationSwitch?.visibility = View.VISIBLE
-                        }
-                    }
-                    .doOnError {
-                        Log.e("startup", "get user error: $it")
-                    }
-
-            // setup map
-            val mapObservable = mapFragment?.setup(this)
-                    ?.doOnError {
-                        Log.e("startup", "Map setup error: $it")
-                    }
-
-            Observable.concat(userObservable, mapObservable)
+            SessionController.loadUserAndMeta(UserDummy.USER_ID)
                     .compose(bindToLifecycle())
-                    .doOnComplete {
+                    .subscribe({
                         if (SessionController.user?.position?.enabled == true) {
                             SessionController.startPositionLoop(this)
                         }
 
+                        runOnUiThread {
+                            enableLocationSwitch?.isChecked = SessionController.user?.position?.enabled == true
+                            enableLocationSwitch?.visibility = View.VISIBLE
+                        }
+                    }, {
+                        Log.e("startup", "get user error: $it")
+                    })
+
+            // setup map
+            mapFragment?.setup(this)
+                    ?.compose(bindToLifecycle())
+                    ?.subscribe({
                         // Listen for click events on map annotations
                         mapFragment?.getAnnotationObserver()
                                 ?.observeOn(Schedulers.io())
@@ -93,8 +87,9 @@ open class StartUpActivity : DemoActivity() {
                             // Add dummy annotations
                             fetchAndSetAnnotations(mapFragment?.getViewportBounds())
                         }
-                    }
-                    .subscribe()
+                    }, {
+                        Log.e("startup", "Map setup error: $it")
+                    })
         } else {
             SessionController.startPositionLoop(this)
         }
@@ -111,12 +106,12 @@ open class StartUpActivity : DemoActivity() {
                 SessionController.loadUserAndMeta(UserDummy.USER_ID)
                         .observeOn(Schedulers.io())
                         .subscribeOn(Schedulers.io())
-                        .subscribe ( {
+                        .subscribe({
                             runOnUiThread {
                                 enableLocationSwitch?.isChecked = SessionController.user?.position?.enabled == true
                                 enableLocationSwitch?.visibility = View.VISIBLE
                             }
-                        },  {
+                        }, {
                             Log.e("startup", "get user error: $it")
                         })
             } else {

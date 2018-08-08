@@ -377,7 +377,6 @@ open class Dialog : LinearLayout {
         }
 
         private fun show(dialog: MaterialDialog?, cancelable: Boolean): MaterialDialog? {
-
             dialog?.setCancelable(cancelable)
             dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog?.window?.setDimAmount(0.8f)

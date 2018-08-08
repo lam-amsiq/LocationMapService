@@ -7,7 +7,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 object HeatmapMaths {
-    fun computeHashmaps(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): Pair<List<List<Annotation>>, List<Annotation>> {
+    fun computeHeatmaps(annotationList: LinkedList<Annotation>, groupDistance: Double, isSortedByLatitudeAsc: Boolean): Pair<List<List<Annotation>>, List<Annotation>> {
         val annotationMap = HeatmapMaths.mapAnnotations(annotationList, groupDistance, isSortedByLatitudeAsc)
         val heatmaps = arrayListOf<List<Annotation>>()
         val remaining= arrayListOf<Annotation>()
@@ -38,7 +38,11 @@ object HeatmapMaths {
 
             if (pairedAnnotations.isNotEmpty()) {
                 pairedAnnotations.forEach { pairedAnnotation ->
-                    traverseMap(pairedAnnotation, heatmap, annotationMap)
+                    try {
+                        traverseMap(pairedAnnotation, heatmap, annotationMap)
+                    } catch (e: StackOverflowError) {
+
+                    }
                 }
             }
         }

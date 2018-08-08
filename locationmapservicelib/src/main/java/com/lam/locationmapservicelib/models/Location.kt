@@ -23,4 +23,21 @@ open class Location(
             "Disabled"
         }}"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+
+        return (other as? Location)?.let {
+            lat == other.lng &&
+                    lng == other.lng &&
+                    enabled == enabled
+        } ?: false
+    }
+
+    override fun hashCode(): Int {
+        var result = lat?.hashCode() ?: 0
+        result = 31 * result + (lng?.hashCode() ?: 0)
+        result = 31 * result + (enabled?.hashCode() ?: 0)
+        return result
+    }
 }

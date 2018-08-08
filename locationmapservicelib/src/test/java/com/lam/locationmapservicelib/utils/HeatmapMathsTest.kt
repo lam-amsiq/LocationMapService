@@ -146,7 +146,7 @@ class HeatmapMathsTest {
                 arrayListOf(a4,a1,a2,a3)
         ), arrayListOf(a13))
 
-        var actual = HeatmapMaths.computeHashmaps(annotations, .05, true)
+        var actual = HeatmapMaths.computeHeatmaps(annotations, .05, true)
 
         println("Heatmaps:")
         actual.first.forEach { heatmap ->
@@ -158,7 +158,7 @@ class HeatmapMathsTest {
         assertEquals(expected, actual)
 
         // Check for group distance shorter than group size
-        actual = HeatmapMaths.computeHashmaps(annotations, .02, true)
+        actual = HeatmapMaths.computeHeatmaps(annotations, .02, true)
         assertEquals(expected, actual)
 
         // Check if position is null
@@ -170,7 +170,7 @@ class HeatmapMathsTest {
                 arrayListOf(a4,a1,a2,a3)
         ), arrayListOf(a13))
 
-        actual = HeatmapMaths.computeHashmaps(annotations, .05, true)
+        actual = HeatmapMaths.computeHeatmaps(annotations, .05, true)
         assertEquals(expected, actual)
 
         // Check if annotation is null
@@ -182,7 +182,7 @@ class HeatmapMathsTest {
                 arrayListOf(a4,a1,a2,a3)
         ), arrayListOf(a13))
 
-        actual = HeatmapMaths.computeHashmaps(annotations, .05, true)
+        actual = HeatmapMaths.computeHeatmaps(annotations, .05, true)
         assertEquals(expected, actual)
 
         println("Test computeHeatmaps - SUCCESS")

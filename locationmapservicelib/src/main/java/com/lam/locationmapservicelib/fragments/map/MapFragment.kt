@@ -87,7 +87,7 @@ open class MapFragment : LMSFragment() {
 
             // Compute heatmaps
             val groupDistance = MapController.getGroupDistance(annotationSize)
-            val computedAnnotations = HeatmapMaths.computeHashmaps(annotationList, groupDistance, isSortedByLatitudeAsc)
+            val computedAnnotations = HeatmapMaths.computeHeatmaps(annotationList, groupDistance, isSortedByLatitudeAsc)
 
             // Add heatmaps
             val heatmapLocations = ArrayList<LatLng>()
@@ -133,31 +133,6 @@ open class MapFragment : LMSFragment() {
                     } catch (e: IllegalArgumentException) { }
                 }
     }
-
-//    fun showAnnotation(view: View, anim: AnimatorSet) {
-//        if (annotationPlaceholder?.childCount == 0) {
-//            annotationPlaceholder?.addView(view)
-//        }
-//
-//        anim.addListener(object : AnimatorListenerAdapter() {
-//            override fun onAnimationStart(animation: Animator?) {
-//                super.onAnimationStart(animation)
-//                annotationPlaceholder?.visibility = View.VISIBLE
-//            }
-//        })
-//        anim.start()
-//    }
-//
-//    fun hideAnnotation(anim: AnimatorSet) {
-//        annotationPlaceholder?.removeAllViews()
-//        anim.addListener(object : AnimatorListenerAdapter() {
-//            override fun onAnimationEnd(animation: Animator?) {
-//                super.onAnimationStart(animation)
-//                annotationPlaceholder?.visibility = View.GONE
-//            }
-//        })
-//        anim.start()
-//    }
 
     private fun getAnnotationImage(picasso: Picasso, baseApiUrl: String?, imageApiExtension: String?, defaultImage: Int, errorImage: Int): Observable<Bitmap> = Observable.create { emitter ->
         if (!emitter.isDisposed) {

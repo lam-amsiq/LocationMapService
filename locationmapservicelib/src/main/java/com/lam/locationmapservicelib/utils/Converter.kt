@@ -6,7 +6,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 
 object Converter {
-    fun getDpInInteger(dp: Float, context: Context): Int {
+    fun dpToPx(dp: Float, context: Context): Int {
         return Math.round(context.resources.displayMetrics.density * dp)
     }
 

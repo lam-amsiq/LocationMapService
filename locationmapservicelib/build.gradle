@@ -31,6 +31,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    testOptions {
+        unitTests.includeAndroidResources true
+        unitTests.returnDefaultValues = true
+    }
 }
 
 ext {
@@ -52,6 +57,8 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     testImplementation 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:2.19.0'
+    testCompile 'org.json:json:20180130'
 
     kapt 'com.android.databinding:compiler:3.1.3'
 

@@ -10,8 +10,8 @@ android {
         renderscriptTargetApi 27 // must match target sdk and build tools
         targetSdkVersion 27
         minSdkVersion 18
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.1"
         applicationId "lam.com.locationmapservice"
         renderscriptSupportModeEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -107,5 +107,5 @@ dependencies {
             'com.android.support:design:' + SupportVersion
 
     implementation project(':locationmapservicelib')
-//    implementation 'com.github.lam-amsiq:LocationMapService:1.0.2'
+//    implementation 'com.github.lam-amsiq:LocationMapService:1.1'
 }

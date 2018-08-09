@@ -4,7 +4,9 @@ A location map service that uses Google Map to display large quantaties of annot
 
 The library gives the user an easy interface to put and take annotations into the map.
 
-# Installation
+# Installation 
+
+[![](https://jitpack.io/v/lam-amsiq/LocationMapService.svg)](https://jitpack.io/#lam-amsiq/LocationMapService)
 
 To get the Git project into your build:
 

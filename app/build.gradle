@@ -14,6 +14,7 @@ android {
         versionName "1.1"
         applicationId "lam.com.locationmapservice"
         renderscriptSupportModeEnabled true
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "BASEURLAPI", "\"http://nasie.diskstation.me:7070/locationmapwebservice/api/\""
         buildConfigField "String", "BASEURLWEB", "\"http://nasie.diskstation.me:7070/locationmapwebservice\""

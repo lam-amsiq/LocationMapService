@@ -30,7 +30,7 @@ allprojects {
 ```gradle
 dependencies {
   implementation 'com.google.android.gms:play-services-maps:15.0.1'
-  implementation 'com.github.lam-amsiq:LocationMapService:1.1'
+  implementation 'com.github.lam-amsiq:LocationMapService:1.1.1'
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
 <dependency>
     <groupId>com.github.lam-amsiq</groupId>
     <artifactId>LocationMapService</artifactId>
-    <version>1.1</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 - sbt
@@ -61,7 +61,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 ```
 2. Add the dependency
 ```sbt
-libraryDependencies += "com.github.lam-amsiq" % "LocationMapService" % "1.1"
+libraryDependencies += "com.github.lam-amsiq" % "LocationMapService" % "1.1.1"
 ```
 - Leiningen
 
@@ -71,7 +71,7 @@ libraryDependencies += "com.github.lam-amsiq" % "LocationMapService" % "1.1"
 ```
 2. Add the dependency
 ```
-:dependencies [[com.github.lam-amsiq/LocationMapService "1.1"]]
+:dependencies [[com.github.lam-amsiq/LocationMapService "1.1.1"]]
 ```
 
 3. Add API key for Google Maps in the manifest

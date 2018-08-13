@@ -79,17 +79,17 @@ open class MapFragment : LMSFragment() {
 
     fun setAnnotations(annotationList: LinkedList<Annotation>, isSortedByLatitudeAsc: Boolean, baseApiUrl: String?, defaultImage: Int, errorImage: Int) {
         MapController.getRealm()?.let { realm ->
+            // Compute heatmaps
+            val groupDistance = MapController.getGroupDistance(annotationSize)
+            val computedAnnotations = HeatmapMaths.computeHeatmaps(annotationList, groupDistance, isSortedByLatitudeAsc)
+
             // Remove old annotations from realm and map
             MapController.clearMap()
             realm.beginTransaction()
             realm.delete(Annotation::class.java)
             realm.commitTransaction()
 
-            // Compute heatmaps
-            val groupDistance = MapController.getGroupDistance(annotationSize)
-            val computedAnnotations = HeatmapMaths.computeHeatmaps(annotationList, groupDistance, isSortedByLatitudeAsc)
-
-            // Add heatmaps
+             // Add heatmaps
             val heatmapLocations = ArrayList<LatLng>()
             computedAnnotations.first.forEach { heatmap ->
                 heatmapLocations.clear()
